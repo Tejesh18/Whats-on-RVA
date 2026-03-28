@@ -33,6 +33,23 @@ body {
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.35);
 }
 
+.rva-map-pin-inner--event {
+  background: #2563eb;
+}
+
+.rva-map-pin-inner--story {
+  background: #ea580c;
+  box-shadow: 0 0 0 2px rgba(234, 88, 12, 0.35);
+}
+
+.rva-map-pin-inner--transit {
+  width: 12px;
+  height: 12px;
+  background: #059669;
+  border: 2px solid #ecfdf5;
+  box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.35);
+}
+
 .rva-map-pin-inner--selected {
   width: 18px;
   height: 18px;

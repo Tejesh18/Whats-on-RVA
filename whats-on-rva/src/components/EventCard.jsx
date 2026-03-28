@@ -1,12 +1,30 @@
-import { formatEventDayBadge, formatEventWhen } from '../lib/eventFilters.js';
+import { formatEventDayBadge, formatEventWhen, displaySourceLabel } from '../lib/eventFilters.js';
+import { inferSupportBadges } from '../lib/eventSupportBadges.js';
+import { shareText } from '../lib/shareRichmond.js';
 
 /**
- * Event-style card: large visual, date chip, gradient CTA.
+ * Full feed card: media, metadata, accessibility, save/share, optional neighborhood story link.
  */
-export default function EventCard({ event, selected, onActivate }) {
+export default function EventCard({
+  event,
+  selected,
+  onActivate,
+  saved,
+  onToggleSave,
+  relatedStorySlug,
+  onOpenStory,
+}) {
   const when = formatEventWhen(event.startTime);
   const { month, day } = formatEventDayBadge(event.startTime);
   const tags = Array.isArray(event.tags) ? event.tags.slice(0, 2) : [];
+  const badges = Array.isArray(event.accessibilityBadges) ? event.accessibilityBadges : [];
+  const supportBadges = inferSupportBadges(event);
+  const src = displaySourceLabel(event.sourceName);
+
+  async function handleShare() {
+    const text = `${event.title} — ${when} at ${event.venue}`;
+    await shareText({ title: event.title, text, url: event.sourceUrl });
+  }
 
   return (
     <article
@@ -54,9 +72,7 @@ export default function EventCard({ event, selected, onActivate }) {
             <span className="rounded-full bg-zinc-100 px-3 py-0.5 text-[11px] font-bold uppercase tracking-wide text-zinc-600">
               {event.category}
             </span>
-            <span className="rounded-full bg-zinc-900 px-2.5 py-0.5 text-[10px] font-semibold text-white">
-              {event.sourceName}
-            </span>
+            <span className="rounded-full bg-zinc-900 px-2.5 py-0.5 text-[10px] font-semibold text-white">{src}</span>
             {event.isFree ? (
               <span className="text-xs font-bold text-emerald-600">Free</span>
             ) : (
@@ -77,6 +93,33 @@ export default function EventCard({ event, selected, onActivate }) {
           <p className="mt-1 truncate text-sm font-semibold text-sky-800">{event.venue}</p>
           <p className="truncate text-xs text-zinc-400">{event.neighborhood}</p>
 
+          {badges.length > 0 ? (
+            <div className="mt-2 flex flex-wrap gap-1">
+              {badges.slice(0, 4).map((b) => (
+                <span
+                  key={b}
+                  className="rounded-full bg-emerald-50 px-2 py-0.5 text-[10px] font-semibold text-emerald-800 ring-1 ring-emerald-200/80"
+                >
+                  {b}
+                </span>
+              ))}
+            </div>
+          ) : null}
+
+          {supportBadges.length > 0 ? (
+            <div className="mt-2 flex flex-wrap gap-1">
+              {supportBadges.map((b) => (
+                <span
+                  key={b.id}
+                  className="rounded-full bg-amber-50 px-2 py-0.5 text-[10px] font-bold text-amber-900 ring-1 ring-amber-200/90"
+                  title="Inferred from listing text — confirm with the venue"
+                >
+                  {b.label}
+                </span>
+              ))}
+            </div>
+          ) : null}
+
           {tags.length > 0 ? (
             <div className="mt-2 flex flex-wrap gap-1.5">
               {tags.map((t) => (
@@ -92,14 +135,42 @@ export default function EventCard({ event, selected, onActivate }) {
 
           <p className="mt-3 line-clamp-2 flex-1 text-sm leading-relaxed text-zinc-600">{event.description}</p>
 
-          <div className="mt-4">
+          {relatedStorySlug ? (
+            <button
+              type="button"
+              onClick={() => onOpenStory?.(relatedStorySlug)}
+              className="mt-3 w-full rounded-xl border border-violet-200 bg-violet-50/80 py-2 text-xs font-bold text-violet-900 transition hover:bg-violet-100 sm:w-auto sm:px-4"
+            >
+              Related neighborhood story
+            </button>
+          ) : null}
+
+          <div className="mt-4 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => onToggleSave?.(event.id)}
+              className={`rounded-xl px-4 py-2 text-xs font-bold transition ${
+                saved
+                  ? 'bg-amber-400 text-zinc-900'
+                  : 'border border-zinc-200 bg-zinc-50 text-zinc-700 hover:border-amber-300'
+              }`}
+            >
+              {saved ? 'Saved' : 'Save'}
+            </button>
+            <button
+              type="button"
+              onClick={handleShare}
+              className="rounded-xl border border-zinc-200 bg-white px-4 py-2 text-xs font-bold text-zinc-700 hover:bg-zinc-50"
+            >
+              Share
+            </button>
             <a
               href={event.sourceUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-zinc-900 to-zinc-800 py-3 text-sm font-bold text-white shadow-lg transition hover:from-zinc-800 hover:to-zinc-700 sm:w-auto sm:px-8"
+              className="inline-flex flex-1 items-center justify-center rounded-xl bg-gradient-to-r from-zinc-900 to-zinc-800 py-2.5 text-sm font-bold text-white shadow-lg transition hover:from-zinc-800 hover:to-zinc-700 sm:flex-none sm:px-6"
             >
-              Get tickets / details
+              View source
             </a>
           </div>
         </div>

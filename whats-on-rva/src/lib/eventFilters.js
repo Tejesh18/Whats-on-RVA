@@ -88,3 +88,88 @@ export function matchesFilters(event, filters) {
   if (filters.price === 'paid' && event.isFree) return false;
   return true;
 }
+
+/** @param {'any'|'today'|'weekend'|'next7'} preset */
+export function matchesDatePreset(event, preset, now = new Date()) {
+  if (preset === 'any') return true;
+  const d = new Date(event.startTime);
+  if (preset === 'today') {
+    return todayYmdRichmond(d) === todayYmdRichmond(now);
+  }
+  if (preset === 'next7') {
+    const end = new Date(now);
+    end.setDate(end.getDate() + 7);
+    return d >= now && d <= end;
+  }
+  if (preset === 'weekend') {
+    return isThisWeekendRichmond(event, now);
+  }
+  return true;
+}
+
+/**
+ * Fri 5pm+ / Sat / Sun, within a loose “coming up soon” window (demo-friendly).
+ */
+export function isThisWeekendRichmond(event, now = new Date()) {
+  const ev = new Date(event.startTime);
+  const parts = new Intl.DateTimeFormat('en-US', {
+    timeZone: RICHMOND_TZ,
+    weekday: 'short',
+    hour: 'numeric',
+    hour12: false,
+  }).formatToParts(ev);
+  const day = parts.find((p) => p.type === 'weekday')?.value;
+  const hr = Number(parts.find((p) => p.type === 'hour')?.value);
+  const weekendish = day === 'Sat' || day === 'Sun' || (day === 'Fri' && hr >= 17);
+  if (!weekendish) return false;
+  const diffMs = ev.getTime() - now.getTime();
+  if (diffMs < -36 * 3600 * 1000) return false;
+  if (diffMs > 8 * 24 * 3600 * 1000) return false;
+  return true;
+}
+
+const A11Y_RULES = {
+  family: /family|kid|children|all ages|youth|parent/i,
+  wheelchair: /wheelchair|ada|accessible|mobility|a11y/i,
+  multilingual: /spanish|bilingual|multilingual|interpret|translation|esl/i,
+  transit: /transit|gRTC|bus line|pulse|bike rack|parking nearby|walkable/i,
+};
+
+/** @param {Set<string>|string[]} accessibilityKeys */
+export function matchesAccessibilityKeys(event, accessibilityKeys) {
+  const keys = accessibilityKeys instanceof Set ? [...accessibilityKeys] : accessibilityKeys;
+  if (!keys.length) return true;
+  const badges = Array.isArray(event.accessibilityBadges) ? event.accessibilityBadges.join(' ') : '';
+  const blob = [
+    badges,
+    event.title,
+    event.description,
+    event.venue,
+    ...(Array.isArray(event.tags) ? event.tags : []),
+  ]
+    .join(' ')
+    .toLowerCase();
+
+  return keys.every((k) => {
+    const rule = A11Y_RULES[k];
+    if (!rule) return true;
+    return rule.test(blob);
+  });
+}
+
+export function isSmallVenueSupporting(event) {
+  if (event.hiddenGem) return true;
+  const blob = `${event.title} ${event.description} ${(event.tags || []).join(' ')}`.toLowerCase();
+  return (
+    /\b(community|grassroots|neighbor|collective|porch|pt\.a|school|market|craft|open mic|poetry)\b/i.test(
+      blob
+    ) && !event.featured
+  );
+}
+
+export function displaySourceLabel(sourceName) {
+  if (!sourceName) return 'Listing';
+  if (sourceName === 'CultureWorks' || sourceName === 'Eventbrite') return sourceName;
+  if (/community|grassroots|neighbor|volunteer|pta|collective/i.test(sourceName)) return 'Community Feed';
+  return sourceName;
+}

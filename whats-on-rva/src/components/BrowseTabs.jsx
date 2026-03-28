@@ -1,5 +1,6 @@
 const tabs = [
   { id: 'all', label: 'All' },
+  { id: 'foryou', label: 'For you' },
   { id: 'featured', label: 'Featured' },
   { id: 'gems', label: 'Hidden gems' },
 ];

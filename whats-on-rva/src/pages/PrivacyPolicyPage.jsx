@@ -49,7 +49,10 @@ export default function PrivacyPolicyPage() {
 
       <LegalSection title="Cookies and local storage">
         <p>
-          We use local storage for optional sign-in state and hashed credentials as described above.
+          We use local storage for optional sign-in state, hashed credentials, saved favorite events,
+          favorite neighborhoods, favorite stories, saved event-type preferences for the &quot;For
+          you&quot; tab, free/paid taste preference, recently viewed neighborhood stories, and similar
+          on-device personalization as described in the app.
           We do not use cookies or storage to track you across other sites. If we add analytics or
           server-backed accounts, we will update this policy.
         </p>

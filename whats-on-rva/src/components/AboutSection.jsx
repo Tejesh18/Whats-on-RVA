@@ -31,6 +31,11 @@ export default function AboutSection() {
               <strong className="text-rva-slate">Accounts</strong> — optional sign-in stores data in
               your browser only until you wire a real backend.
             </li>
+            <li>
+              <strong className="text-rva-slate">Stories &amp; map layers</strong> — neighborhood
+              narratives (illustrative), walking-tour mock routes, and map pins for events vs story
+              anchors vs historic district outlines.
+            </li>
           </ul>
           <p className="text-xs text-rva-slate/55">
             Always confirm date, time, price, and location on the organizer&apos;s page before you head

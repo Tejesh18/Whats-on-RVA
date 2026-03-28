@@ -1,4 +1,5 @@
 import EventCard from './EventCard.jsx';
+import { storySlugForEventNeighborhood } from '../data/neighborhoodStories.js';
 
 function EventGridSkeleton() {
   return (
@@ -19,6 +20,9 @@ export default function EventGrid({
   selectedId,
   onSelectEvent,
   loading,
+  favoriteIds,
+  onToggleFavorite,
+  onOpenStory,
 }) {
   if (loading) {
     return <EventGridSkeleton />;
@@ -40,6 +44,10 @@ export default function EventGrid({
             event={event}
             selected={selectedId === event.id}
             onActivate={onSelectEvent}
+            saved={favoriteIds?.has(event.id)}
+            onToggleSave={onToggleFavorite}
+            relatedStorySlug={storySlugForEventNeighborhood(event.neighborhood)}
+            onOpenStory={onOpenStory}
           />
         </li>
       ))}

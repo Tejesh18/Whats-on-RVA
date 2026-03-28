@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { MapContainer, TileLayer, Marker, Popup, useMap, Rectangle } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap, Rectangle, Polygon } from 'react-leaflet';
 import L from 'leaflet';
 import { RICHMOND_VA_BOUNDS, isWithinRichmondVaBounds } from '../lib/richmondBounds.js';
+import { RICHMOND_TRANSIT_PINS } from '../data/transitPins.js';
 
 const RVA_CENTER = [37.5407, -77.436];
 
@@ -10,20 +11,36 @@ const CITY_RECT = [
   [RICHMOND_VA_BOUNDS.north, RICHMOND_VA_BOUNDS.east],
 ];
 
-const pinDefault = L.divIcon({
+const pinEvent = L.divIcon({
   className: 'rva-leaflet-divicon',
-  html: '<div class="rva-map-pin-inner"></div>',
+  html: '<div class="rva-map-pin-inner rva-map-pin-inner--event"></div>',
   iconSize: [26, 26],
   iconAnchor: [13, 24],
   popupAnchor: [0, -22],
 });
 
-const pinSelected = L.divIcon({
+const pinEventSelected = L.divIcon({
   className: 'rva-leaflet-divicon',
-  html: '<div class="rva-map-pin-inner rva-map-pin-inner--selected"></div>',
+  html: '<div class="rva-map-pin-inner rva-map-pin-inner--event rva-map-pin-inner--selected"></div>',
   iconSize: [32, 32],
   iconAnchor: [16, 28],
   popupAnchor: [0, -26],
+});
+
+const pinStory = L.divIcon({
+  className: 'rva-leaflet-divicon',
+  html: '<div class="rva-map-pin-inner rva-map-pin-inner--story"></div>',
+  iconSize: [28, 28],
+  iconAnchor: [14, 26],
+  popupAnchor: [0, -24],
+});
+
+const pinTransit = L.divIcon({
+  className: 'rva-leaflet-divicon',
+  html: '<div class="rva-map-pin-inner rva-map-pin-inner--transit"></div>',
+  iconSize: [22, 22],
+  iconAnchor: [11, 20],
+  popupAnchor: [0, -18],
 });
 
 function eventsWithCoords(events) {
@@ -107,12 +124,33 @@ function LocateControlLeaflet({ onMessage }) {
 }
 
 /**
- * Carto Voyager basemap, Richmond city bounds guide, fly-to selection, geolocation control.
+ * Blue = events, orange = story anchors, purple polygons = historic districts (illustrative).
  */
-export default function EventMap({ events, selectedId, onSelectEvent }) {
+const MAP_FILTER_CHIPS = [
+  { id: 'music', label: 'Music' },
+  { id: 'visual', label: 'Visual art' },
+  { id: 'theatre', label: 'Theatre' },
+  { id: 'family', label: 'Family' },
+  { id: 'free', label: 'Free' },
+];
+
+export default function EventMap({
+  events,
+  selectedId,
+  onSelectEvent,
+  storyPoints = [],
+  historicPolygons = [],
+  artsPolygons = [],
+  onStoryPinClick,
+  mapContentFilters,
+  onMapContentFilterToggle,
+  showTransit,
+  onShowTransitToggle,
+}) {
   const pts = eventsWithCoords(events);
   const [locateMsg, setLocateMsg] = useState('');
   const msgTimer = useRef(null);
+  const filterSet = mapContentFilters instanceof Set ? mapContentFilters : new Set();
 
   const onLocateMessage = (m) => {
     if (msgTimer.current) window.clearTimeout(msgTimer.current);
@@ -124,21 +162,76 @@ export default function EventMap({ events, selectedId, onSelectEvent }) {
 
   return (
     <div className="flex h-[min(320px,45vh)] w-full flex-col overflow-hidden rounded-2xl border border-zinc-200/80 bg-zinc-900 shadow-xl shadow-zinc-900/10 ring-1 ring-black/5 sm:h-[min(360px,42vh)] lg:h-[min(74vh,680px)] lg:min-h-[420px]">
-      <div className="flex items-center justify-between border-b border-zinc-700/50 bg-gradient-to-r from-zinc-950 to-zinc-900 px-3 py-2.5">
-        <div>
-          <span className="text-xs font-bold uppercase tracking-wider text-amber-400/90">Explore</span>
-          <p className="text-[11px] text-zinc-400">Pins · popups · city bounds · near me</p>
-        </div>
-        <div className="flex flex-col items-end gap-1">
-          <span className="rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-semibold text-zinc-200">
-            {pts.length} on map
-          </span>
-          {locateMsg ? (
-            <span className="max-w-[160px] text-right text-[10px] font-medium text-amber-200/90">
-              {locateMsg}
+      <div className="flex flex-col gap-2 border-b border-zinc-700/50 bg-gradient-to-r from-zinc-950 to-zinc-900 px-3 py-2.5">
+        <div className="flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <span className="text-xs font-bold uppercase tracking-wider text-amber-400/90">Cultural district map</span>
+            <p className="text-[10px] text-zinc-400">
+              <span className="inline-flex items-center gap-1">
+                <span className="h-2 w-2 rounded-full bg-blue-500" /> Events
+              </span>
+              {' · '}
+              <span className="inline-flex items-center gap-1">
+                <span className="h-2 w-2 rounded-full bg-orange-500" /> Stories
+              </span>
+              {' · '}
+              <span className="inline-flex items-center gap-1">
+                <span className="h-2 w-2 rounded-full bg-violet-500" /> Historic
+              </span>
+              {' · '}
+              <span className="inline-flex items-center gap-1">
+                <span className="h-2 w-2 rounded-full bg-teal-400" /> Arts zones
+              </span>
+              {' · '}
+              <span className="inline-flex items-center gap-1">
+                <span className="h-2 w-2 rounded-full bg-emerald-500" /> Transit
+              </span>
+            </p>
+          </div>
+          <div className="flex flex-col items-end gap-1">
+            <span className="rounded-full bg-white/10 px-2.5 py-1 text-[11px] font-semibold text-zinc-200">
+              {pts.length} events
             </span>
-          ) : null}
+            {locateMsg ? (
+              <span className="max-w-[160px] text-right text-[10px] font-medium text-amber-200/90">
+                {locateMsg}
+              </span>
+            ) : null}
+          </div>
         </div>
+        {onMapContentFilterToggle ? (
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="text-[9px] font-bold uppercase tracking-wider text-zinc-500">Filter pins</span>
+            {MAP_FILTER_CHIPS.map((c) => {
+              const on = filterSet.has(c.id);
+              return (
+                <button
+                  key={c.id}
+                  type="button"
+                  aria-pressed={on}
+                  onClick={() => onMapContentFilterToggle(c.id)}
+                  className={`rounded-full px-2.5 py-1 text-[10px] font-bold ${
+                    on ? 'bg-sky-500 text-white' : 'bg-white/10 text-zinc-300 hover:bg-white/15'
+                  }`}
+                >
+                  {c.label}
+                </button>
+              );
+            })}
+          </div>
+        ) : null}
+        {onShowTransitToggle ? (
+          <button
+            type="button"
+            aria-pressed={showTransit}
+            onClick={onShowTransitToggle}
+            className={`self-start rounded-full px-3 py-1 text-[10px] font-bold ${
+              showTransit ? 'bg-emerald-600 text-white' : 'bg-white/10 text-zinc-300'
+            }`}
+          >
+            Transit stops {showTransit ? 'on' : 'off'}
+          </button>
+        ) : null}
       </div>
       <div className="relative min-h-0 flex-1">
         <MapContainer
@@ -162,14 +255,75 @@ export default function EventMap({ events, selectedId, onSelectEvent }) {
               dashArray: '6 10',
             }}
           />
+          {historicPolygons.map((poly) => (
+            <Polygon
+              key={poly.id}
+              positions={poly.positions}
+              pathOptions={{
+                color: poly.color || '#7c3aed',
+                weight: 2,
+                opacity: 0.65,
+                fillOpacity: 0.08,
+              }}
+            />
+          ))}
+          {(artsPolygons || []).map((poly) => (
+            <Polygon
+              key={`art-${poly.id}`}
+              positions={poly.positions}
+              pathOptions={{
+                color: poly.color || '#0d9488',
+                weight: 1.5,
+                opacity: 0.55,
+                fillOpacity: 0.06,
+                dashArray: '4 8',
+              }}
+            />
+          ))}
           <MapBounds events={events} />
           <MapFlyTo selectedId={selectedId} events={events} />
           <LocateControlLeaflet onMessage={onLocateMessage} />
+          {showTransit
+            ? RICHMOND_TRANSIT_PINS.map((t) => (
+                <Marker key={t.id} position={[t.lat, t.lng]} icon={pinTransit}>
+                  <Popup>
+                    <div className="max-w-[200px]">
+                      <p className="text-sm font-bold text-zinc-900">{t.label}</p>
+                      <p className="text-[10px] text-zinc-500">Illustrative Pulse / transfer stop</p>
+                    </div>
+                  </Popup>
+                </Marker>
+              ))
+            : null}
+          {storyPoints.map((s) => (
+            <Marker
+              key={s.slug}
+              position={[s.lat, s.lng]}
+              icon={pinStory}
+              eventHandlers={{
+                click: () => onStoryPinClick?.(s.slug),
+              }}
+            >
+              <Popup>
+                <div className="max-w-[220px]">
+                  <p className="text-sm font-bold text-zinc-900">{s.title}</p>
+                  <p className="text-[11px] text-zinc-500">Orange pin — neighborhood story (modal)</p>
+                  <button
+                    type="button"
+                    className="mt-2 w-full rounded-md bg-orange-600 py-1.5 text-xs font-bold text-white"
+                    onClick={() => onStoryPinClick?.(s.slug)}
+                  >
+                    Open full story
+                  </button>
+                </div>
+              </Popup>
+            </Marker>
+          ))}
           {pts.map((e) => (
             <Marker
               key={e.id}
               position={[e.latitude, e.longitude]}
-              icon={e.id === selectedId ? pinSelected : pinDefault}
+              icon={e.id === selectedId ? pinEventSelected : pinEvent}
               eventHandlers={{
                 click: () => onSelectEvent?.(e.id),
               }}
@@ -181,13 +335,14 @@ export default function EventMap({ events, selectedId, onSelectEvent }) {
                   <p className="mt-0.5 text-[10px] font-medium uppercase tracking-wide text-zinc-400">
                     {e.sourceName}
                   </p>
+                  <p className="mt-1 text-[10px] text-zinc-500">Blue pin — selects event in the list &amp; map.</p>
                   <a
                     href={e.sourceUrl}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="mt-2 inline-flex rounded-md bg-zinc-900 px-3 py-1.5 text-xs font-bold text-white hover:bg-zinc-800"
                   >
-                    Tickets / details →
+                    View source →
                   </a>
                 </div>
               </Popup>
