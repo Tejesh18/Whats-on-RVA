@@ -1,5 +1,5 @@
 /**
- * Live search across title, venue, keywords, etc.
+ * Hero-style search field.
  */
 export default function SearchBar({ value, onChange, id = 'event-search' }) {
   return (
@@ -8,7 +8,7 @@ export default function SearchBar({ value, onChange, id = 'event-search' }) {
         Search events
       </label>
       <span
-        className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-rva-slate/50"
+        className="pointer-events-none absolute left-5 top-1/2 -translate-y-1/2 text-zinc-400"
         aria-hidden
       >
         <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -25,8 +25,8 @@ export default function SearchBar({ value, onChange, id = 'event-search' }) {
         type="search"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder="Search events, venues, neighborhoods…"
-        className="w-full rounded-xl border border-rva-slate/15 bg-white py-3 pl-12 pr-4 text-base text-rva-slate shadow-sm outline-none ring-rva-gold/40 transition placeholder:text-rva-slate/40 focus:border-rva-river focus:ring-2"
+        placeholder="Search artists, venues, genres…"
+        className="w-full rounded-full border border-zinc-200/90 bg-white py-3.5 pl-14 pr-5 text-base font-medium text-zinc-900 shadow-lg shadow-zinc-900/5 outline-none ring-amber-400/0 transition placeholder:text-zinc-400 focus:border-amber-400/50 focus:ring-4 focus:ring-amber-400/15"
       />
     </div>
   );

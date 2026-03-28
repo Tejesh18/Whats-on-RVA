@@ -9,6 +9,7 @@ import {
 } from './lib/eventFilters.js';
 import { useHashRoute } from './hooks/useHashRoute.js';
 import SiteHeader from './components/SiteHeader.jsx';
+import HeroSection from './components/HeroSection.jsx';
 import SearchBar from './components/SearchBar.jsx';
 import FilterBar from './components/FilterBar.jsx';
 import BrowseTabs from './components/BrowseTabs.jsx';
@@ -120,21 +121,23 @@ function HomeView() {
   };
 
   return (
-    <div className="min-h-screen bg-[#f6f4f1]">
+    <div className="min-h-screen bg-zinc-950">
       <SiteHeader />
+      <HeroSection />
 
-      <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="min-w-0 flex-1">
-            <SearchBar value={search} onChange={setSearch} />
+      <main
+        id="browse-events"
+        className="relative border-t border-white/5 bg-gradient-to-b from-zinc-100 via-[#f0ebe3] to-zinc-50"
+      >
+        <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div className="min-w-0 flex-1">
+              <SearchBar value={search} onChange={setSearch} />
+            </div>
+            {usingFallback ? <DemoDataBadge /> : null}
           </div>
-          {usingFallback ? <DemoDataBadge /> : null}
-        </div>
 
-        <div className="mt-4 rounded-2xl border border-rva-slate/10 bg-white p-4 shadow-sm">
-          {loading ? (
-            <p className="text-sm text-rva-slate/55">Loading events…</p>
-          ) : (
+          <div className="mt-6 rounded-3xl border border-zinc-200/80 bg-white/90 p-5 shadow-xl shadow-zinc-900/5 backdrop-blur-sm">
             <FilterBar
               neighborhoods={neighborhoods}
               categories={categories}
@@ -143,39 +146,40 @@ function HomeView() {
               tonightActive={tonightOnly}
               onTonightClick={handleTonight}
             />
-          )}
-        </div>
+          </div>
 
-        <div className="mt-5 flex flex-col gap-6 lg:flex-row lg:items-start">
-          <div className="min-w-0 flex-1 lg:max-w-[min(100%,520px)] xl:max-w-[560px]">
-            <BrowseTabs value={browseTab} onChange={setBrowseTab} counts={tabCounts} />
-            <p className="mt-3 text-xs text-rva-slate/50">
-              {listEvents.length} event{listEvents.length === 1 ? '' : 's'}. Tap a listing or map pin to
-              match the map and list.
-            </p>
-            <div className="mt-4">
-              <EventGrid
+          <div className="mt-8 flex flex-col gap-8 lg:flex-row lg:items-start">
+            <div className="min-w-0 flex-1 lg:max-w-[min(100%,560px)] xl:max-w-[600px]">
+              <BrowseTabs value={browseTab} onChange={setBrowseTab} counts={tabCounts} />
+              <p className="mt-4 text-sm font-medium text-zinc-500">
+                <span className="font-bold text-zinc-800">{listEvents.length}</span> event
+                {listEvents.length === 1 ? '' : 's'} · Select a card or pin to sync map &amp; list
+              </p>
+              <div className="mt-5">
+                <EventGrid
+                  loading={loading}
+                  events={listEvents}
+                  selectedId={selectedId}
+                  onSelectEvent={setSelectedId}
+                  emptyMessage="Nothing matches — try clearing filters or search."
+                />
+              </div>
+            </div>
+
+            <div className="w-full shrink-0 lg:sticky lg:top-24 lg:w-[min(100%,460px)] xl:w-[500px]">
+              <EventMap
                 events={listEvents}
                 selectedId={selectedId}
                 onSelectEvent={setSelectedId}
-                emptyMessage="Nothing matches — try clearing filters or search."
               />
             </div>
           </div>
-
-          <div className="w-full shrink-0 lg:sticky lg:top-[4.5rem] lg:w-[min(100%,440px)] xl:w-[480px]">
-            <EventMap
-              events={listEvents}
-              selectedId={selectedId}
-              onSelectEvent={setSelectedId}
-            />
-          </div>
         </div>
-      </div>
 
-      <ContactSection />
-      <AboutSection />
-      <SiteFooter />
+        <ContactSection />
+        <AboutSection />
+        <SiteFooter />
+      </main>
     </div>
   );
 }

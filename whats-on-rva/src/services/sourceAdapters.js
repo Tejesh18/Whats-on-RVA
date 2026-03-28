@@ -1,13 +1,25 @@
 /**
  * Fetches raw CultureWorks JSON and maps it to the app’s event shape.
- * Other fetch helpers here return [] until implemented.
+ * Eventbrite search when a dev proxy or production proxy URL is configured.
  */
 
 import { mockEvents } from '../data/mockEvents.js';
 import { cultureWorksEventsUrl, defaultEventImageUrl } from '../config/env.js';
+import {
+  isWithinRichmondVaBounds,
+  mentionsOutOfCityArea,
+  passesRichmondTextGate,
+} from '../lib/richmondBounds.js';
 
 export async function fetchMockNormalized() {
-  return Promise.resolve([...mockEvents]);
+  const kept = mockEvents.filter((ev) => {
+    if (typeof ev.latitude === 'number' && typeof ev.longitude === 'number') {
+      return isWithinRichmondVaBounds(ev.latitude, ev.longitude);
+    }
+    const blob = `${ev.venue} ${ev.neighborhood} ${ev.title}`;
+    return !mentionsOutOfCityArea(blob) && /\brichmond\b|\brva\b/i.test(blob);
+  });
+  return Promise.resolve(kept);
 }
 
 function stripRichText(s) {
@@ -126,6 +138,24 @@ export function normalizeCultureWorksNode(node, fallbackListingUrl) {
 
   const lat = parseFloat(e.geo?.latitude);
   const lng = parseFloat(e.geo?.longitude);
+  const hasCoords = Number.isFinite(lat) && Number.isFinite(lng);
+  if (hasCoords) {
+    if (!isWithinRichmondVaBounds(lat, lng)) return null;
+  } else {
+    if (
+      !passesRichmondTextGate({
+        geo: e.geo,
+        title: e.title,
+        venue: e.location_name || e.address,
+        neighborhood: region,
+      })
+    ) {
+      return null;
+    }
+  }
+
+  const textBlob = `${e.title} ${e.location_name} ${e.address} ${region}`;
+  if (mentionsOutOfCityArea(textBlob)) return null;
 
   return {
     id: `cw-${e.id}`,
@@ -169,8 +199,109 @@ export async function fetchCultureWorksNormalized(eventsUrl = cultureWorksEvents
   return mapped;
 }
 
+function eventbriteApiBase() {
+  if (import.meta.env.DEV) return '/eventbrite-api';
+  const p = import.meta.env.VITE_EVENTBRITE_PROXY?.replace(/\/$/, '');
+  return p || '';
+}
+
+function ebStrip(s) {
+  if (!s) return '';
+  return String(s)
+    .replace(/<[^>]*>/g, ' ')
+    .replace(/&nbsp;/gi, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function normalizeEventbriteEvent(raw) {
+  const v = raw.venue;
+  const lat = v?.latitude != null ? parseFloat(v.latitude) : NaN;
+  const lng = v?.longitude != null ? parseFloat(v.longitude) : NaN;
+  const city = v?.address?.localized_city || v?.address?.city || '';
+
+  if (Number.isFinite(lat) && Number.isFinite(lng)) {
+    if (!isWithinRichmondVaBounds(lat, lng)) return null;
+  } else {
+    const blob = `${raw.name?.text ?? ''} ${v?.name ?? ''} ${city}`;
+    if (mentionsOutOfCityArea(blob)) return null;
+    if (city && !/^richmond\b/i.test(String(city).trim())) return null;
+  }
+
+  const startUtc = raw.start?.utc;
+  if (!startUtc) return null;
+  const startTime = new Date(startUtc).toISOString();
+  let endTime = startTime;
+  if (raw.end?.utc) {
+    endTime = new Date(raw.end.utc).toISOString();
+  } else {
+    const d = new Date(startTime);
+    d.setUTCHours(d.getUTCHours() + 3);
+    endTime = d.toISOString();
+  }
+
+  const descHtml = raw.description?.text || '';
+  const desc = ebStrip(descHtml);
+  const description =
+    desc.length > 280 ? `${desc.slice(0, 277).trim()}…` : desc || 'See Eventbrite for details.';
+
+  const venueName = v?.name?.trim() || 'Venue on Eventbrite';
+  const neighborhood = /^richmond/i.test(String(city).trim()) ? 'Richmond' : 'Richmond area';
+
+  const isFree = raw.is_free === true;
+  const logo = raw.logo?.url ? raw.logo.url.replace(/http:/, 'https:') : null;
+
+  return {
+    id: `eb-${raw.id}`,
+    title: raw.name?.text?.trim() || 'Eventbrite event',
+    category: 'Eventbrite',
+    neighborhood,
+    venue: venueName,
+    startTime,
+    endTime,
+    isFree,
+    price: isFree ? null : 'See Eventbrite',
+    description,
+    sourceName: 'Eventbrite',
+    sourceUrl: raw.url || 'https://www.eventbrite.com',
+    imageUrl: logo || defaultEventImageUrl,
+    featured: false,
+    hiddenGem: false,
+    tags: [],
+    accessibilityBadges: [],
+    latitude: Number.isFinite(lat) ? lat : null,
+    longitude: Number.isFinite(lng) ? lng : null,
+  };
+}
+
+/**
+ * Eventbrite’s API blocks browser CORS. In dev, Vite proxies `/eventbrite-api` with `EVENTBRITE_PRIVATE_TOKEN`.
+ * For production, set `VITE_EVENTBRITE_PROXY` to your own serverless URL that forwards to Eventbrite with the token.
+ */
 export async function fetchEventbriteNormalized() {
-  return [];
+  const base = eventbriteApiBase();
+  if (!base) return [];
+
+  const params = new URLSearchParams({
+    'location.address': 'Richmond, VA, USA',
+    'location.within': '8km',
+    expand: 'venue',
+  });
+
+  try {
+    const res = await fetch(`${base}/events/search/?${params}`, {
+      headers: { Accept: 'application/json' },
+    });
+    if (!res.ok) return [];
+    const data = await res.json();
+    const list = data.events;
+    if (!Array.isArray(list)) return [];
+    const mapped = list.map(normalizeEventbriteEvent).filter(Boolean);
+    mapped.sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
+    return mapped;
+  } catch {
+    return [];
+  }
 }
 
 export async function fetchRssNormalized() {

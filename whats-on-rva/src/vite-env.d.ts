@@ -7,6 +7,8 @@ interface ImportMetaEnv {
   readonly VITE_CONTACT_EMAIL?: string;
   readonly VITE_LEGAL_ENTITY?: string;
   readonly VITE_PUBLIC_SITE_URL?: string;
+  /** HTTPS base URL of your serverless proxy to Eventbrite API v3 (production). */
+  readonly VITE_EVENTBRITE_PROXY?: string;
 }
 
 interface ImportMeta {

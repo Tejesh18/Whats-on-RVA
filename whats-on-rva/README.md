@@ -4,13 +4,14 @@ A **Richmond, Virginia** web app for discovering **arts and culture events**: se
 
 ## Overview
 
-The app loads public event data from the **CultureWorks** calendar when available and shows it in a fast, mobile-friendly UI. If that feed is unavailable, **example Richmond-area events** are shown so the site still works.
+The app merges **CultureWorks** and (optionally) **Eventbrite** listings, scoped to **Richmond city limits**, in a modern discovery UI. If feeds return nothing, **example events** are shown.
 
 ## Features
 
 - Search, area, category, and price filters; **Tonight** shortcut
 - Tabs: **All** / **Featured** / **Hidden gems**
-- **Map** (OpenStreetMap) with pins when coordinates exist; list and map stay in sync
+- **Map** (CARTO Voyager + OSM data) with pins, popups, Richmond bounds overlay, **Near me**, and list sync
+- Optional **Sign in / Register** (browser-local demo accounts)
 - **Get tickets / details** on every card → official URL
 - Collapsible **Where listings come from** on the site
 - Short status when **example events** are shown instead of the live calendar
@@ -20,8 +21,10 @@ The app loads public event data from the **CultureWorks** calendar when availabl
 | Path | Role |
 |------|------|
 | `src/App.jsx` | Layout and UI state; calls `getEvents()` for listings |
-| `src/services/eventService.js` | Loads events (CultureWorks + local fallback) |
-| `src/services/sourceAdapters.js` | Fetches and maps CultureWorks JSON → app event shape |
+| `src/services/eventService.js` | Loads CultureWorks + Eventbrite, dedupes, fallback |
+| `src/services/sourceAdapters.js` | CultureWorks + Eventbrite → normalized events |
+| `src/lib/richmondBounds.js` | City box + text rules (drop Petersburg, etc.) |
+| `src/lib/mergeEvents.js` | Dedupe merged feeds |
 | `src/lib/normalizedEvent.js` | Shared event field definitions (JSDoc) |
 | `src/config/env.js` | `VITE_*` env vars (URLs, timezone, default image) |
 | `src/data/mockEvents.js` | Example events when the live feed fails |
@@ -30,8 +33,24 @@ The app loads public event data from the **CultureWorks** calendar when availabl
 
 ## Data sources
 
-- **Primary:** [CultureWorks calendar API](https://calendar.richmondcultureworks.org/api/2/events) (override with `VITE_CULTUREWORKS_EVENTS_URL`).
-- **Fallback:** Bundled example events in `mockEvents.js`.
+- **CultureWorks:** [Richmond CultureWorks calendar API](https://calendar.richmondcultureworks.org/api/2/events) (override with `VITE_CULTUREWORKS_EVENTS_URL`).
+- **Eventbrite (optional):** Search near Richmond is merged in when configured — see **Eventbrite** below.
+- **Geography:** Listings are filtered to a **Richmond city bounding box** plus text checks so places like Petersburg drop out when coordinates or city names are present.
+- **Fallback:** Example events in `mockEvents.js` if live feeds return nothing.
+
+## Eventbrite API
+
+Eventbrite blocks browser CORS. **Local dev:** add `EVENTBRITE_PRIVATE_TOKEN` to `.env.local` (no `VITE_` prefix). Vite proxies `/eventbrite-api` to `https://www.eventbriteapi.com/v3` and attaches `Authorization: Bearer …`. **Production:** set `VITE_EVENTBRITE_PROXY` to your own HTTPS endpoint that forwards to Eventbrite with the token server-side (e.g. Cloudflare Worker, Vercel serverless function).
+
+## Accounts (sign in / register)
+
+Optional auth stores **hashed passwords and session in this browser’s local storage only** — fine for demos. For a public product, replace with Supabase, Clerk, or your API and update the Privacy copy.
+
+| Path | Role |
+|------|------|
+| `src/context/AuthContext.jsx` | Session + sign-in / register / sign-out |
+| `src/lib/localAuth.js` | SHA-256 + `localStorage` users |
+| `src/components/AuthModal.jsx` | Modal UI |
 
 ## When the live feed fails
 

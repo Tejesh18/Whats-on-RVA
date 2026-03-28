@@ -37,6 +37,14 @@ export function formatEventWhen(iso) {
   }).format(new Date(iso));
 }
 
+/** Two-line date chip for cards (Richmond wall clock). */
+export function formatEventDayBadge(iso) {
+  const d = new Date(iso);
+  const month = new Intl.DateTimeFormat('en-US', { timeZone: RICHMOND_TZ, month: 'short' }).format(d);
+  const day = new Intl.DateTimeFormat('en-US', { timeZone: RICHMOND_TZ, day: 'numeric' }).format(d);
+  return { month, day: String(day) };
+}
+
 export function matchesQuery(event, q) {
   if (!q.trim()) return true;
   const needle = q.trim().toLowerCase();

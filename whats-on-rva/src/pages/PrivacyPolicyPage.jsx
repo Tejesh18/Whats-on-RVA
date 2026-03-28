@@ -18,8 +18,11 @@ export default function PrivacyPolicyPage() {
 
       <LegalSection title="What we collect">
         <p>
-          This site is built to browse public event listings without creating an account. We do not
-          intentionally collect names, emails, or passwords through the app itself.
+          You can browse listings without signing in. If you choose <strong>Register</strong> or{' '}
+          <strong>Sign in</strong>, we store your email and a one-way hash of your password in{' '}
+          <strong>this browser&apos;s local storage only</strong> (not on our servers unless you later
+          connect a real backend). Do not reuse an important password; treat demo accounts as local
+          convenience only.
         </p>
         <p>
           Your browser and our hosting provider may create standard server logs (such as IP address,
@@ -34,7 +37,11 @@ export default function PrivacyPolicyPage() {
 
       <LegalSection title="Event listings">
         <p>
-          Listings and images come from public sources (including third-party regional calendars).
+          Listings and images come from public sources (CultureWorks and, when configured, Eventbrite
+          search). We filter to <strong>Richmond city limits</strong> on our side when possible, but
+          always verify the venue address on the organizer&apos;s page.
+        </p>
+        <p>
           When you follow &quot;Get tickets / details,&quot; you leave our site; those organizations
           have their own privacy practices.
         </p>
@@ -42,8 +49,9 @@ export default function PrivacyPolicyPage() {
 
       <LegalSection title="Cookies and local storage">
         <p>
-          We do not use cookies or browser storage to track you across other sites. If we add
-          optional features (such as analytics or saved preferences), we will update this policy.
+          We use local storage for optional sign-in state and hashed credentials as described above.
+          We do not use cookies or storage to track you across other sites. If we add analytics or
+          server-backed accounts, we will update this policy.
         </p>
       </LegalSection>
 

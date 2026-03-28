@@ -24,8 +24,8 @@ export const siteConfig = {
   /** Canonical site URL (sharing, future canonical tags) */
   publicSiteUrl: (env.VITE_PUBLIC_SITE_URL || 'https://whatsonrva.com').replace(/\/$/, ''),
 
-  /** Shown in policies */
-  regionLabel: 'Richmond, Virginia area',
+  /** Shown in policies / hero */
+  regionLabel: 'Richmond, Virginia',
 
   /** Update when you change Privacy or Terms */
   policiesLastUpdated: 'March 28, 2026',

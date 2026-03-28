@@ -13,18 +13,23 @@ export default function AboutSection() {
         </summary>
         <div className="space-y-4 border-t border-rva-slate/10 px-5 py-5 text-sm leading-relaxed text-rva-slate/75">
           <p>
-            {siteConfig.siteName} helps you browse Richmond-area arts and culture happenings in one
-            place. We are not the organizer — each event links to the venue or presenter for tickets,
-            updates, and accessibility information.
+            {siteConfig.siteName} is styled like a modern discovery product: search, filters, tabs,
+            and an interactive map. Listings are limited to <strong>Richmond city limits</strong>{' '}
+            (we drop obvious out-of-city venues such as Petersburg when we can tell from location
+            data). We are not the organizer — each event links out for tickets and updates.
           </p>
           <ul className="list-inside list-disc space-y-2">
             <li>
-              <strong className="text-rva-slate">CultureWorks calendar</strong> — regional arts &amp;
-              culture listings when the feed is available.
+              <strong className="text-rva-slate">CultureWorks</strong> — Richmond CultureWorks
+              calendar JSON when the feed is available.
             </li>
             <li>
-              <strong className="text-rva-slate">More listings</strong> — more venues and ticket
-              sites over time.
+              <strong className="text-rva-slate">Eventbrite</strong> — optional search near Richmond
+              when you configure an API token (dev proxy) or your own production proxy URL.
+            </li>
+            <li>
+              <strong className="text-rva-slate">Accounts</strong> — optional sign-in stores data in
+              your browser only until you wire a real backend.
             </li>
           </ul>
           <p className="text-xs text-rva-slate/55">

@@ -9,6 +9,7 @@ import {
   fetchMockNormalized,
   fetchRssNormalized,
 } from './sourceAdapters.js';
+import { dedupeMergedEvents } from '../lib/mergeEvents.js';
 
 /** @returns {Promise<import('../lib/normalizedEvent.js').NormalizedEvent[]>} */
 export async function fetchMockEvents() {
@@ -34,9 +35,10 @@ export async function fetchRssEvents() {
  */
 export async function getEvents() {
   try {
-    const live = await fetchCultureWorksEvents();
-    if (live.length > 0) {
-      return { events: live, usingFallback: false };
+    const [cw, eb] = await Promise.all([fetchCultureWorksEvents(), fetchEventbriteEvents()]);
+    const merged = dedupeMergedEvents([...cw, ...eb]);
+    if (merged.length > 0) {
+      return { events: merged, usingFallback: false };
     }
   } catch {
     /* network, CORS, etc. */
