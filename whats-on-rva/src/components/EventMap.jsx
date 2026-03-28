@@ -3,6 +3,11 @@ import { MapContainer, TileLayer, Marker, Popup, useMap, Rectangle, Polygon } fr
 import L from 'leaflet';
 import { RICHMOND_VA_BOUNDS, isWithinRichmondVaBounds } from '../lib/richmondBounds.js';
 import { RICHMOND_TRANSIT_PINS } from '../data/transitPins.js';
+import { getEventTransitSummary } from '../lib/transitEstimates.js';
+
+function stripBoldMarkers(text) {
+  return text.replace(/\*\*([^*]+)\*\*/g, '$1');
+}
 
 const RVA_CENTER = [37.5407, -77.436];
 
@@ -82,7 +87,7 @@ function MapFlyTo({ selectedId, events }) {
   return null;
 }
 
-function LocateControlLeaflet({ onMessage }) {
+function LocateControlLeaflet({ onMessage, onLocated }) {
   const map = useMap();
   useEffect(() => {
     const Control = L.Control.extend({
@@ -90,7 +95,7 @@ function LocateControlLeaflet({ onMessage }) {
         const root = L.DomUtil.create('div', 'rva-locate-control leaflet-bar');
         const btn = L.DomUtil.create('button', '', root);
         btn.type = 'button';
-        btn.title = 'Center map on your location (Richmond only)';
+        btn.title = 'Center map on your location; also powers trip hints on event cards';
         btn.textContent = 'Near me';
         btn.style.cssText =
           'padding:6px 10px;font-size:11px;font-weight:700;cursor:pointer;background:#18181b;color:#fff;border:1px solid #3f3f46;border-radius:6px;';
@@ -104,6 +109,7 @@ function LocateControlLeaflet({ onMessage }) {
           navigator.geolocation.getCurrentPosition(
             (pos) => {
               const { latitude, longitude } = pos.coords;
+              onLocated?.({ lat: latitude, lng: longitude });
               if (isWithinRichmondVaBounds(latitude, longitude)) {
                 map.flyTo([latitude, longitude], 14, { duration: 0.6 });
                 onMessage?.('');
@@ -122,7 +128,7 @@ function LocateControlLeaflet({ onMessage }) {
     const c = new Control({ position: 'bottomright' });
     c.addTo(map);
     return () => c.remove();
-  }, [map, onMessage]);
+  }, [map, onMessage, onLocated]);
   return null;
 }
 
@@ -149,6 +155,8 @@ export default function EventMap({
   onMapContentFilterToggle,
   showTransit,
   onShowTransitToggle,
+  travelOrigin,
+  onUserLocated,
 }) {
   const pts = eventsWithCoords(events);
   const [locateMsg, setLocateMsg] = useState('');
@@ -301,7 +309,7 @@ export default function EventMap({
           ))}
           <MapBounds events={events} />
           <MapFlyTo selectedId={selectedId} events={events} />
-          <LocateControlLeaflet onMessage={onLocateMessage} />
+          <LocateControlLeaflet onMessage={onLocateMessage} onLocated={onUserLocated} />
           {showTransit
             ? RICHMOND_TRANSIT_PINS.map((t) => (
                 <Marker key={t.id} position={[t.lat, t.lng]} icon={pinTransit}>
@@ -355,6 +363,29 @@ export default function EventMap({
                     {e.sourceName}
                   </p>
                   <p className="mt-1 text-[10px] text-zinc-500">Blue pin — selects event in the list &amp; map.</p>
+                  {(() => {
+                    const s = getEventTransitSummary(e, travelOrigin);
+                    if (!s) return null;
+                    return (
+                      <div className="mt-2 border-t border-zinc-200 pt-2">
+                        <p className="text-[9px] font-bold uppercase tracking-wide text-emerald-800">Getting there</p>
+                        {s.lines.map((line) => (
+                          <p key={line.key} className="mt-1 text-[10px] leading-snug text-zinc-700">
+                            {stripBoldMarkers(line.text)}
+                          </p>
+                        ))}
+                        <a
+                          href={s.mapsTransitUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-1.5 inline-flex text-[10px] font-bold text-emerald-800 underline-offset-2 hover:underline"
+                        >
+                          Open Google Maps (transit) →
+                        </a>
+                        <p className="mt-1 text-[9px] leading-snug text-zinc-500">{s.disclaimer}</p>
+                      </div>
+                    );
+                  })()}
                   <a
                     href={e.sourceUrl}
                     target="_blank"

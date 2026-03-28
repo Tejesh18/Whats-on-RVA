@@ -41,8 +41,14 @@ export default function HeroSection() {
           >
             Browse events
           </a>
+          <a
+            href="#why-us"
+            className="inline-flex items-center justify-center rounded-full border border-amber-400/50 bg-amber-400/10 px-6 py-3 text-sm font-bold text-amber-100 transition hover:border-amber-300 hover:bg-amber-400/20"
+          >
+            Why us vs Eventbrite
+          </a>
           <span className="inline-flex items-center rounded-full border border-white/15 bg-white/5 px-4 py-3 text-xs font-medium text-zinc-400">
-            Map · filters · tonight mode
+            Map · stories · plan
           </span>
         </div>
       </div>

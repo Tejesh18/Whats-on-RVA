@@ -24,6 +24,7 @@ export default function DiscoveryPanel({
   nearTonightActive,
   onNearTonightToggle,
   onNearTonightRequestGeo,
+  onRequestTravelEtaGeo,
   smallVenuesActive,
   onSmallVenuesToggle,
   prioritizeCommunityActive,
@@ -232,6 +233,11 @@ export default function DiscoveryPanel({
           >
             Near me tonight
           </button>
+          {onRequestTravelEtaGeo ? (
+            <button type="button" onClick={onRequestTravelEtaGeo} className={`${quickBase} ${quickOff}`}>
+              Trip hints from my location
+            </button>
+          ) : null}
           <button type="button" onClick={onSurpriseMe} className={`${quickBase} ${quickOff}`}>
             Surprise me
           </button>

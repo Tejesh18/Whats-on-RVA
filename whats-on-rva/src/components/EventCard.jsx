@@ -2,6 +2,7 @@ import { memo, useCallback } from 'react';
 import { formatEventDayBadge, formatEventWhen, displaySourceLabel } from '../lib/eventFilters.js';
 import { inferSupportBadges } from '../lib/eventSupportBadges.js';
 import { shareText } from '../lib/shareRichmond.js';
+import EventTransitStrip from './EventTransitStrip.jsx';
 
 /**
  * Full feed card — flatter, snappy interactions (Eventbrite-style); memoized for long lists.
@@ -14,6 +15,7 @@ function EventCard({
   onToggleSave,
   relatedStorySlug,
   onOpenStory,
+  travelOrigin,
 }) {
   const when = formatEventWhen(event.startTime);
   const { month, day } = formatEventDayBadge(event.startTime);
@@ -95,6 +97,10 @@ function EventCard({
           <p className="mt-1 text-sm font-medium text-zinc-500">{when}</p>
           <p className="mt-1 truncate text-sm font-semibold text-sky-800">{event.venue}</p>
           <p className="truncate text-xs text-zinc-400">{event.neighborhood}</p>
+
+          {typeof event.latitude === 'number' && typeof event.longitude === 'number' ? (
+            <EventTransitStrip event={event} travelOrigin={travelOrigin} />
+          ) : null}
 
           {badges.length > 0 ? (
             <div className="mt-2 flex flex-wrap gap-1">
@@ -183,11 +189,24 @@ function EventCard({
 }
 
 export default memo(EventCard, (a, b) => {
+  const oa = a.travelOrigin;
+  const ob = b.travelOrigin;
+  const originSame =
+    oa === ob ||
+    (oa &&
+      ob &&
+      typeof oa.lat === 'number' &&
+      typeof ob.lat === 'number' &&
+      typeof oa.lng === 'number' &&
+      typeof ob.lng === 'number' &&
+      oa.lat === ob.lat &&
+      oa.lng === ob.lng);
   return (
     a.event === b.event &&
     a.selected === b.selected &&
     a.saved === b.saved &&
     a.relatedStorySlug === b.relatedStorySlug &&
+    originSame &&
     a.onActivate === b.onActivate &&
     a.onToggleSave === b.onToggleSave &&
     a.onOpenStory === b.onOpenStory

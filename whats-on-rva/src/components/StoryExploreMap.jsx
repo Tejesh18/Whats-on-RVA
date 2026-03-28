@@ -62,15 +62,15 @@ export default function StoryExploreMap({ onOpenStory }) {
   return (
     <div className="flex flex-col gap-3">
       <div className="rounded-2xl border border-violet-200/80 bg-violet-50/40 px-4 py-3 text-sm text-zinc-700">
-        <p className="font-display font-bold text-violet-950">How this map works</p>
+        <p className="font-display font-bold text-violet-950">Interactive story map</p>
         <p className="mt-1 text-xs leading-relaxed text-zinc-600">
-          Zoom in toward a colored zone (zoom level {STORY_ZONE_POLYGONS[0]?.minZoom}+). When the map center sits inside a
-          neighborhood, a story card appears below — like focusing a lens on that place.
+          Zoom to level {STORY_ZONE_POLYGONS[0]?.minZoom}+ and center the map inside a colored neighborhood — a{' '}
+          <strong>story card appears on the map</strong>. Orange pins open stories anytime.
         </p>
       </div>
 
-      <div className="h-[min(380px,55vh)] w-full overflow-hidden rounded-2xl border border-zinc-200 shadow-sm lg:h-[min(520px,70vh)]">
-        <MapContainer center={RVA_CENTER} zoom={11} className="h-full w-full" scrollWheelZoom zoomControl>
+      <div className="relative h-[min(420px,62vh)] w-full overflow-hidden rounded-2xl border border-zinc-200 shadow-md ring-1 ring-black/5 lg:h-[min(560px,72vh)]">
+        <MapContainer center={RVA_CENTER} zoom={11} className="z-0 h-full w-full" scrollWheelZoom zoomControl>
           <TileLayer
             attribution='&copy; OSM &copy; CARTO'
             url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
@@ -82,9 +82,9 @@ export default function StoryExploreMap({ onOpenStory }) {
               positions={z.positions}
               pathOptions={{
                 color: z.color,
-                weight: 2,
-                opacity: 0.75,
-                fillOpacity: activeSlug === z.slug ? 0.18 : 0.06,
+                weight: activeSlug === z.slug ? 3 : 2,
+                opacity: activeSlug === z.slug ? 1 : 0.75,
+                fillOpacity: activeSlug === z.slug ? 0.22 : 0.06,
               }}
             />
           ))}
@@ -118,34 +118,66 @@ export default function StoryExploreMap({ onOpenStory }) {
             </Marker>
           ))}
         </MapContainer>
-      </div>
 
-      <div
-        className={`rounded-2xl border px-4 py-4 transition-colors ${
-          activeStory
-            ? 'border-violet-400 bg-white shadow-md ring-1 ring-violet-200'
-            : 'border-dashed border-zinc-300 bg-zinc-50/80'
-        }`}
-      >
-        {activeStory ? (
-          <div>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-violet-600">You&apos;re zoomed into</p>
-            <h3 className="mt-1 font-display text-lg font-bold text-zinc-900">{activeStory.title}</h3>
-            <p className="mt-2 line-clamp-3 text-sm text-zinc-600">{activeStory.shortDescription}</p>
-            <button
-              type="button"
-              onClick={() => onOpenStory?.(activeStory.slug)}
-              className="mt-4 w-full rounded-xl bg-violet-600 py-3 text-sm font-bold text-white hover:bg-violet-700 sm:w-auto sm:px-6"
-            >
-              Read full story
-            </button>
-          </div>
-        ) : (
-          <p className="text-center text-sm text-zinc-500">
-            Pan and <strong>zoom closer</strong> (level {STORY_ZONE_POLYGONS[0]?.minZoom}+) into a purple, teal, or blue
-            zone — the matching neighborhood story will appear here.
-          </p>
-        )}
+        {/* On-map UI: story surfaces here, not below the map */}
+        <div
+          className="pointer-events-none absolute inset-0 z-[1000] flex flex-col justify-end p-3 sm:p-4"
+          aria-live="polite"
+        >
+          {!activeStory ? (
+            <div className="pointer-events-none flex justify-center">
+              <div className="max-w-sm rounded-2xl bg-zinc-950/80 px-4 py-2.5 text-center text-xs font-medium leading-snug text-white shadow-lg backdrop-blur-md ring-1 ring-white/15">
+                Pan &amp; zoom — when you&apos;re <strong className="text-amber-200">centered in a zone</strong>, its story
+                pops up on this map.
+              </div>
+            </div>
+          ) : (
+            <div className="pointer-events-auto" style={{ animation: 'rvaStoryCardIn 0.35s ease-out both' }}>
+              <div className="mx-auto flex max-w-lg flex-col overflow-hidden rounded-2xl border border-violet-200/90 bg-white/95 shadow-2xl shadow-violet-900/20 ring-1 ring-black/5 backdrop-blur-md sm:flex-row sm:max-w-xl">
+                <div className="relative h-36 w-full shrink-0 sm:h-auto sm:w-36 sm:min-h-[140px]">
+                  <img
+                    src={activeStory.heroImage}
+                    alt=""
+                    className="h-full w-full object-cover"
+                    loading="eager"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent sm:bg-gradient-to-r" />
+                  <span className="absolute bottom-2 left-2 rounded-md bg-black/55 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+                    {activeStory.neighborhoodTag}
+                  </span>
+                </div>
+                <div className="flex min-w-0 flex-1 flex-col justify-center p-4">
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-violet-600">Story in this view</p>
+                  <h3 className="mt-1 font-display text-lg font-bold leading-tight text-zinc-900">{activeStory.title}</h3>
+                  <p className="mt-2 line-clamp-2 text-sm leading-snug text-zinc-600">{activeStory.shortDescription}</p>
+                  <div className="mt-3 flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      onClick={() => onOpenStory?.(activeStory.slug)}
+                      className="rounded-xl bg-violet-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-violet-700 active:scale-[0.98]"
+                    >
+                      Open full story
+                    </button>
+                    <span className="self-center text-[11px] text-zinc-400">Drag the map to explore another zone</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <style>{`
+          @keyframes rvaStoryCardIn {
+            from {
+              opacity: 0;
+              transform: translateY(12px) scale(0.98);
+            }
+            to {
+              opacity: 1;
+              transform: translateY(0) scale(1);
+            }
+          }
+        `}</style>
       </div>
     </div>
   );

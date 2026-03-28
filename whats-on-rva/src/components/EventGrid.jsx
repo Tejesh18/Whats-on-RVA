@@ -23,6 +23,7 @@ export default function EventGrid({
   favoriteIds,
   onToggleFavorite,
   onOpenStory,
+  travelOrigin,
 }) {
   if (loading) {
     return <EventGridSkeleton />;
@@ -48,6 +49,7 @@ export default function EventGrid({
             onToggleSave={onToggleFavorite}
             relatedStorySlug={storySlugForEventNeighborhood(event.neighborhood)}
             onOpenStory={onOpenStory}
+            travelOrigin={travelOrigin}
           />
         </li>
       ))}

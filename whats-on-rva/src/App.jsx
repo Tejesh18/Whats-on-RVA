@@ -40,6 +40,7 @@ import {
 
 import SiteHeader from './components/SiteHeader.jsx';
 import HeroSection from './components/HeroSection.jsx';
+import WhyUsSection from './components/WhyUsSection.jsx';
 import SearchBar from './components/SearchBar.jsx';
 import BrowseTabs from './components/BrowseTabs.jsx';
 import EventGrid from './components/EventGrid.jsx';
@@ -357,6 +358,7 @@ function HomeView({ hash }) {
     <div className="min-h-screen bg-zinc-950">
       <SiteHeader />
       <HeroSection />
+      <WhyUsSection />
 
       <main
         id="browse-events"
@@ -407,6 +409,7 @@ function HomeView({ hash }) {
                   nearTonightActive={nearTonightActive}
                   onNearTonightToggle={() => setNearTonightActive((v) => !v)}
                   onNearTonightRequestGeo={requestNearGeo}
+                  onRequestTravelEtaGeo={requestNearGeo}
                   smallVenuesActive={smallVenuesActive}
                   onSmallVenuesToggle={() => setSmallVenuesActive((v) => !v)}
                   prioritizeCommunityActive={prioritizeCommunity}
@@ -493,6 +496,7 @@ function HomeView({ hash }) {
                       favoriteIds={favEvents}
                       onToggleFavorite={toggleFavEvent}
                       onOpenStory={openStory}
+                      travelOrigin={userCoords}
                     />
                   </div>
                 </div>
@@ -509,6 +513,11 @@ function HomeView({ hash }) {
                     onMapContentFilterToggle={onMapContentFilterToggle}
                     showTransit={showMapTransit}
                     onShowTransitToggle={() => setShowMapTransit((v) => !v)}
+                    travelOrigin={userCoords}
+                    onUserLocated={(coords) => {
+                      setUserCoords(coords);
+                      setGeoStatus('');
+                    }}
                   />
                 </div>
               </div>
