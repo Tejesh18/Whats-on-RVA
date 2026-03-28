@@ -1,6 +1,25 @@
 /** Search, filters, and date helpers for event objects. */
 import { todayYmdRichmond } from '../data/mockEvents.js';
 import { richmondTimeZone as RICHMOND_TZ } from '../config/env.js';
+import { NEIGHBORHOOD_SPOTLIGHTS } from '../data/neighborhoodStories.js';
+
+/**
+ * Match feed filter to an event neighborhood (exact, substring, or spotlight regex).
+ */
+export function neighborhoodMatchesFilter(eventNeighborhood, filterValue) {
+  if (!filterValue) return true;
+  const ev = String(eventNeighborhood || '');
+  if (!ev) return false;
+  if (ev === filterValue) return true;
+  const evL = ev.toLowerCase();
+  const fvL = String(filterValue).toLowerCase();
+  if (evL.includes(fvL) || fvL.includes(evL)) return true;
+  const spotlight = NEIGHBORHOOD_SPOTLIGHTS.find(
+    (s) => s.label === filterValue || s.label.toLowerCase() === fvL
+  );
+  if (spotlight && spotlight.match.test(ev)) return true;
+  return false;
+}
 
 /**
  * "Tonight / later today" = same calendar day in Richmond and either
@@ -78,7 +97,7 @@ export function deriveCategories(events) {
 
 /** @param {{ neighborhood: string; category: string; price: string }} filters */
 export function matchesFilters(event, filters) {
-  if (filters.neighborhood && event.neighborhood !== filters.neighborhood) {
+  if (filters.neighborhood && !neighborhoodMatchesFilter(event.neighborhood, filters.neighborhood)) {
     return false;
   }
   if (filters.category && event.category !== filters.category) {

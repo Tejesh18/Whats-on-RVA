@@ -33,6 +33,11 @@ export default function PrivacyPolicyPage() {
           If you email us, we receive the address you use and the contents of your message so we can
           respond.
         </p>
+        <p>
+          If you configure an optional third-party URL for the planning chat assistant, your messages
+          and a summary of loaded listings may be sent to that service under their terms — otherwise
+          planning help runs only in your browser.
+        </p>
       </LegalSection>
 
       <LegalSection title="Event listings">

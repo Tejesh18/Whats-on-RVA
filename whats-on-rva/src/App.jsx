@@ -13,7 +13,7 @@ import {
 } from './lib/eventFilters.js';
 import { haversineKm } from './lib/geo.js';
 import { useHashRoute } from './hooks/useHashRoute.js';
-import { getStory } from './data/neighborhoodStories.js';
+import { getStory, NEIGHBORHOOD_SPOTLIGHTS } from './data/neighborhoodStories.js';
 import {
   getFavoriteEventIds,
   toggleFavoriteEvent,
@@ -54,7 +54,7 @@ import ApiStatusBanner from './components/ApiStatusBanner.jsx';
 import NeighborhoodSpotlight from './components/NeighborhoodSpotlight.jsx';
 import FeaturedEventsStrip from './components/FeaturedEventsStrip.jsx';
 import HiddenGemsStrip from './components/HiddenGemsStrip.jsx';
-import StoriesSection from './components/StoriesSection.jsx';
+import PlanningChatAssistant from './components/PlanningChatAssistant.jsx';
 import DiscoveryPanel from './components/DiscoveryPanel.jsx';
 import ForYouSection from './components/ForYouSection.jsx';
 import WalkingTourPanel from './components/WalkingTourPanel.jsx';
@@ -144,7 +144,11 @@ function HomeView({ hash }) {
     loadData();
   }, [loadData]);
 
-  const neighborhoods = useMemo(() => deriveNeighborhoods(events), [events]);
+  const neighborhoods = useMemo(() => {
+    const base = deriveNeighborhoods(events);
+    const spotlightLabels = NEIGHBORHOOD_SPOTLIGHTS.map((s) => s.label);
+    return [...new Set([...base, ...spotlightLabels])].sort((a, b) => a.localeCompare(b));
+  }, [events]);
   const categories = useMemo(() => deriveCategories(events), [events]);
   const storyPoints = useMemo(() => getStoryMapPoints(), []);
 
@@ -376,8 +380,6 @@ function HomeView({ hash }) {
           <FeaturedEventsStrip events={discoverySorted} onSelectEvent={setSelectedId} />
           <HiddenGemsStrip events={discoverySorted} onSelectEvent={setSelectedId} />
 
-          <StoriesSection onExploreStory={openStory} />
-
           <div className="mt-8 rounded-3xl border border-zinc-200/80 bg-white/90 p-5 shadow-xl shadow-zinc-900/5 backdrop-blur-sm">
             <DiscoveryPanel
               neighborhoods={neighborhoods}
@@ -522,6 +524,12 @@ function HomeView({ hash }) {
         <AboutSection />
         <SiteFooter />
       </main>
+
+      <PlanningChatAssistant
+        events={events}
+        onSelectEvent={setSelectedId}
+        onOpenPlanMyNight={() => setPlanNightOpen(true)}
+      />
 
       <PlanMyNightModal
         open={planNightOpen}
