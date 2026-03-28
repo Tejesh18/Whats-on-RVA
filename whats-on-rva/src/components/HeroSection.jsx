@@ -29,8 +29,10 @@ export default function HeroSection() {
         </h1>
         <p className="mt-4 max-w-2xl text-base leading-relaxed text-zinc-400 sm:text-lg">
           Concerts, galleries, theater, and nightlife — scoped to{' '}
-          <strong className="font-semibold text-zinc-200">Richmond city limits</strong>, with CultureWorks
-          and Eventbrite sources when configured. Tap the map, save time, go straight to tickets.
+          <strong className="font-semibold text-zinc-200">Richmond city limits</strong>. Below, switch{' '}
+          <strong className="font-semibold text-zinc-200">Events</strong>,{' '}
+          <strong className="font-semibold text-zinc-200">Neighborhood stories</strong>, or{' '}
+          <strong className="font-semibold text-zinc-200">Plan &amp; personalize</strong> so listings stay up top.
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           <a

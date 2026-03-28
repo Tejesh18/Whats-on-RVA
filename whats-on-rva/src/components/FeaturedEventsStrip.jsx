@@ -1,12 +1,18 @@
-import { formatEventWhen } from '../lib/eventFilters.js';
-import { displaySourceLabel } from '../lib/eventFilters.js';
+import { memo } from 'react';
+import { formatEventWhen, displaySourceLabel } from '../lib/eventFilters.js';
 
-function MiniCard({ event, onSelect }) {
+const MiniCard = memo(function MiniCard({ event, onSelect }) {
   const src = displaySourceLabel(event.sourceName);
   return (
-    <article className="min-w-[260px] max-w-[280px] shrink-0 overflow-hidden rounded-2xl border border-zinc-200/90 bg-white shadow-md">
-      <div className="relative h-32">
-        <img src={event.imageUrl} alt="" className="h-full w-full object-cover" loading="lazy" />
+    <article className="min-w-[260px] max-w-[280px] shrink-0 overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-sm transition-shadow hover:shadow-md">
+      <div className="relative h-32 bg-zinc-100">
+        <img
+          src={event.imageUrl}
+          alt=""
+          className="h-full w-full object-cover"
+          loading="lazy"
+          decoding="async"
+        />
         <span className="absolute left-2 top-2 rounded-md bg-amber-400 px-2 py-0.5 text-[10px] font-bold text-zinc-900">
           Featured
         </span>
@@ -33,14 +39,14 @@ function MiniCard({ event, onSelect }) {
           href={event.sourceUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="mt-2 flex w-full items-center justify-center rounded-lg bg-zinc-900 py-2 text-xs font-bold text-white hover:bg-zinc-800"
+          className="mt-2 flex w-full items-center justify-center rounded-md bg-zinc-900 py-2 text-xs font-bold text-white hover:bg-zinc-800"
         >
-          View source
+          Get tickets
         </a>
       </div>
     </article>
   );
-}
+});
 
 export default function FeaturedEventsStrip({ events, onSelectEvent }) {
   const featured = events.filter((e) => e.featured);

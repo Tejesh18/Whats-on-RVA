@@ -52,17 +52,20 @@ function eventsWithCoords(events) {
 function MapBounds({ events }) {
   const map = useMap();
   useEffect(() => {
-    const pts = eventsWithCoords(events);
-    if (pts.length === 0) {
-      map.setView(RVA_CENTER, 12);
-      return;
-    }
-    if (pts.length === 1) {
-      map.setView([pts[0].latitude, pts[0].longitude], 14);
-      return;
-    }
-    const b = L.latLngBounds(pts.map((e) => [e.latitude, e.longitude]));
-    map.fitBounds(b, { padding: [40, 40], maxZoom: 15 });
+    const t = window.setTimeout(() => {
+      const pts = eventsWithCoords(events);
+      if (pts.length === 0) {
+        map.setView(RVA_CENTER, 12);
+        return;
+      }
+      if (pts.length === 1) {
+        map.setView([pts[0].latitude, pts[0].longitude], 14);
+        return;
+      }
+      const b = L.latLngBounds(pts.map((e) => [e.latitude, e.longitude]));
+      map.fitBounds(b, { padding: [40, 40], maxZoom: 15 });
+    }, 80);
+    return () => window.clearTimeout(t);
   }, [events, map]);
   return null;
 }
@@ -73,7 +76,7 @@ function MapFlyTo({ selectedId, events }) {
     if (!selectedId) return;
     const e = events.find((x) => x.id === selectedId);
     if (e && typeof e.latitude === 'number' && typeof e.longitude === 'number') {
-      map.flyTo([e.latitude, e.longitude], 16, { duration: 0.55 });
+      map.flyTo([e.latitude, e.longitude], 16, { duration: 0.28 });
     }
   }, [selectedId, events, map]);
   return null;
@@ -124,7 +127,7 @@ function LocateControlLeaflet({ onMessage }) {
 }
 
 /**
- * Blue = events, orange = story anchors, purple polygons = historic districts (illustrative).
+ * Events map: blue pins + optional overlays. Story exploration lives on the Stories tab map.
  */
 const MAP_FILTER_CHIPS = [
   { id: 'music', label: 'Music' },
@@ -165,27 +168,43 @@ export default function EventMap({
       <div className="flex flex-col gap-2 border-b border-zinc-700/50 bg-gradient-to-r from-zinc-950 to-zinc-900 px-3 py-2.5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-amber-400/90">Cultural district map</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-amber-400/90">Events map</span>
             <p className="text-[10px] text-zinc-400">
               <span className="inline-flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-blue-500" /> Events
+                <span className="h-2 w-2 rounded-full bg-blue-500" /> Listings
               </span>
-              {' · '}
-              <span className="inline-flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-orange-500" /> Stories
-              </span>
-              {' · '}
-              <span className="inline-flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-violet-500" /> Historic
-              </span>
-              {' · '}
-              <span className="inline-flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-teal-400" /> Arts zones
-              </span>
-              {' · '}
-              <span className="inline-flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-emerald-500" /> Transit
-              </span>
+              {storyPoints.length ? (
+                <>
+                  {' · '}
+                  <span className="inline-flex items-center gap-1">
+                    <span className="h-2 w-2 rounded-full bg-orange-500" /> Stories
+                  </span>
+                </>
+              ) : null}
+              {historicPolygons.length ? (
+                <>
+                  {' · '}
+                  <span className="inline-flex items-center gap-1">
+                    <span className="h-2 w-2 rounded-full bg-violet-500" /> Districts
+                  </span>
+                </>
+              ) : null}
+              {artsPolygons?.length ? (
+                <>
+                  {' · '}
+                  <span className="inline-flex items-center gap-1">
+                    <span className="h-2 w-2 rounded-full bg-teal-400" /> Arts
+                  </span>
+                </>
+              ) : null}
+              {showTransit ? (
+                <>
+                  {' · '}
+                  <span className="inline-flex items-center gap-1">
+                    <span className="h-2 w-2 rounded-full bg-emerald-500" /> Transit
+                  </span>
+                </>
+              ) : null}
             </p>
           </div>
           <div className="flex flex-col items-end gap-1">

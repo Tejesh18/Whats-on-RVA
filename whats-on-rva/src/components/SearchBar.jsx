@@ -1,9 +1,9 @@
 /**
- * Hero-style search field.
+ * Hero-style search field (Eventbrite-style: large, clear focus ring).
  */
-export default function SearchBar({ value, onChange, id = 'event-search' }) {
+export default function SearchBar({ value, onChange, id = 'event-search', pending = false }) {
   return (
-    <div className="relative">
+    <div className={`relative transition-opacity duration-150 ${pending ? 'opacity-80' : ''}`}>
       <label htmlFor={id} className="sr-only">
         Search events
       </label>
@@ -26,8 +26,13 @@ export default function SearchBar({ value, onChange, id = 'event-search' }) {
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="Search artists, venues, genres…"
-        className="w-full rounded-full border border-zinc-200/90 bg-white py-3.5 pl-14 pr-5 text-base font-medium text-zinc-900 shadow-lg shadow-zinc-900/5 outline-none ring-amber-400/0 transition placeholder:text-zinc-400 focus:border-amber-400/50 focus:ring-4 focus:ring-amber-400/15"
+        className={`w-full rounded-full border border-zinc-200/90 bg-white py-3.5 pl-14 text-base font-medium text-zinc-900 shadow-md shadow-zinc-900/[0.03] outline-none ring-amber-400/0 transition placeholder:text-zinc-400 focus:border-zinc-400 focus:ring-2 focus:ring-zinc-900/10 ${pending ? 'pr-11' : 'pr-5'}`}
       />
+      {pending ? (
+        <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-[11px] font-semibold text-zinc-400">
+          …
+        </span>
+      ) : null}
     </div>
   );
 }

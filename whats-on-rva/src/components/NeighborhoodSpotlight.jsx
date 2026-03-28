@@ -7,11 +7,14 @@ export default function NeighborhoodSpotlight({
   onOpenStory,
   favoriteNeighborhoods,
   onToggleFavoriteNeighborhood,
+  /** Called after applying area filter — e.g. switch to Events tab */
+  onAfterShowEvents,
 }) {
   /** Prefer a string that exists in the feed; otherwise use the card label so filtering still applies. */
   function pickSpotlight(spotlight) {
     const found = neighborhoods.find((n) => spotlight.match.test(n));
     onFiltersChange({ ...filters, neighborhood: found || spotlight.label });
+    onAfterShowEvents?.();
   }
 
   return (

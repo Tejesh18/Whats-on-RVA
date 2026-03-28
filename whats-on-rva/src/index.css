@@ -58,6 +58,12 @@ body {
   animation: rva-pin-pulse 1.6s ease-in-out infinite;
 }
 
+/* Long feeds: skip layout work for off-screen cards (Chrome/Edge/Firefox). */
+.rva-feed-card {
+  content-visibility: auto;
+  contain-intrinsic-size: auto 200px;
+}
+
 @keyframes rva-pin-pulse {
   0%,
   100% {

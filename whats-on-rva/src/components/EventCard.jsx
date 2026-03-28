@@ -1,11 +1,12 @@
+import { memo, useCallback } from 'react';
 import { formatEventDayBadge, formatEventWhen, displaySourceLabel } from '../lib/eventFilters.js';
 import { inferSupportBadges } from '../lib/eventSupportBadges.js';
 import { shareText } from '../lib/shareRichmond.js';
 
 /**
- * Full feed card: media, metadata, accessibility, save/share, optional neighborhood story link.
+ * Full feed card — flatter, snappy interactions (Eventbrite-style); memoized for long lists.
  */
-export default function EventCard({
+function EventCard({
   event,
   selected,
   onActivate,
@@ -21,18 +22,18 @@ export default function EventCard({
   const supportBadges = inferSupportBadges(event);
   const src = displaySourceLabel(event.sourceName);
 
-  async function handleShare() {
+  const handleShare = useCallback(async () => {
     const text = `${event.title} — ${when} at ${event.venue}`;
     await shareText({ title: event.title, text, url: event.sourceUrl });
-  }
+  }, [event.title, event.sourceUrl, when, event.venue]);
 
   return (
     <article
       id={`event-card-${event.id}`}
-      className={`group overflow-hidden rounded-2xl border bg-white shadow-md transition duration-300 hover:shadow-xl hover:shadow-zinc-900/10 ${
+      className={`rva-feed-card group overflow-hidden rounded-xl border bg-white shadow-sm transition-[box-shadow,border-color] duration-150 hover:border-zinc-300 hover:shadow-md ${
         selected
-          ? 'border-amber-400/80 ring-2 ring-amber-400/35'
-          : 'border-zinc-200/80 hover:border-zinc-300'
+          ? 'border-amber-400 ring-2 ring-amber-400/30'
+          : 'border-zinc-200'
       }`}
     >
       <div className="flex flex-col sm:flex-row">
@@ -45,8 +46,10 @@ export default function EventCard({
           <img
             src={event.imageUrl}
             alt=""
-            className="h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
+            className="h-full w-full object-cover"
             loading="lazy"
+            decoding="async"
+            fetchPriority="low"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-80 sm:bg-gradient-to-r" />
           <div className="absolute left-3 top-3 flex flex-col rounded-xl bg-white/95 px-2.5 py-1.5 text-center shadow-lg backdrop-blur-sm">
@@ -168,7 +171,7 @@ export default function EventCard({
               href={event.sourceUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex flex-1 items-center justify-center rounded-xl bg-gradient-to-r from-zinc-900 to-zinc-800 py-2.5 text-sm font-bold text-white shadow-lg transition hover:from-zinc-800 hover:to-zinc-700 sm:flex-none sm:px-6"
+              className="inline-flex flex-1 items-center justify-center rounded-lg bg-zinc-900 py-2.5 text-sm font-bold text-white transition hover:bg-zinc-800 sm:flex-none sm:px-6"
             >
               View source
             </a>
@@ -178,3 +181,15 @@ export default function EventCard({
     </article>
   );
 }
+
+export default memo(EventCard, (a, b) => {
+  return (
+    a.event === b.event &&
+    a.selected === b.selected &&
+    a.saved === b.saved &&
+    a.relatedStorySlug === b.relatedStorySlug &&
+    a.onActivate === b.onActivate &&
+    a.onToggleSave === b.onToggleSave &&
+    a.onOpenStory === b.onOpenStory
+  );
+});

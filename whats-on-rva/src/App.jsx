@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { lazy, Suspense, useCallback, useDeferredValue, useEffect, useMemo, useState } from 'react';
 import { getEvents } from './services/eventService.js';
 import {
   deriveCategories,
@@ -20,7 +20,7 @@ import {
   getFavoriteNeighborhoods,
   toggleFavoriteNeighborhood,
 } from './lib/favoritesStorage.js';
-import { getStoryMapPoints, HISTORIC_DISTRICT_POLYGONS, ARTS_DISTRICT_POLYGONS } from './data/mapLayers.js';
+import { ARTS_DISTRICT_POLYGONS } from './data/mapLayers.js';
 import { inferSupportBadges } from './lib/eventSupportBadges.js';
 import { matchesAnyMapContentFilter } from './lib/mapContentFilters.js';
 import {
@@ -43,7 +43,7 @@ import HeroSection from './components/HeroSection.jsx';
 import SearchBar from './components/SearchBar.jsx';
 import BrowseTabs from './components/BrowseTabs.jsx';
 import EventGrid from './components/EventGrid.jsx';
-import EventMap from './components/EventMap.jsx';
+import DeferredEventMap from './components/DeferredEventMap.jsx';
 import DemoDataBadge from './components/DemoDataBadge.jsx';
 import ContactSection from './components/ContactSection.jsx';
 import AboutSection from './components/AboutSection.jsx';
@@ -51,20 +51,18 @@ import SiteFooter from './components/SiteFooter.jsx';
 import PrivacyPolicyPage from './pages/PrivacyPolicyPage.jsx';
 import TermsPage from './pages/TermsPage.jsx';
 import ApiStatusBanner from './components/ApiStatusBanner.jsx';
-import NeighborhoodSpotlight from './components/NeighborhoodSpotlight.jsx';
 import FeaturedEventsStrip from './components/FeaturedEventsStrip.jsx';
 import HiddenGemsStrip from './components/HiddenGemsStrip.jsx';
 import PlanningChatAssistant from './components/PlanningChatAssistant.jsx';
 import DiscoveryPanel from './components/DiscoveryPanel.jsx';
-import ForYouSection from './components/ForYouSection.jsx';
-import WalkingTourPanel from './components/WalkingTourPanel.jsx';
 import SourcesTrustSection from './components/SourcesTrustSection.jsx';
 import ReadyToIntegrateSection from './components/ReadyToIntegrateSection.jsx';
-import WalkingTourChooser from './components/WalkingTourChooser.jsx';
 import StoryDetailModal from './components/StoryDetailModal.jsx';
-import NeighborhoodVibeStrip from './components/NeighborhoodVibeStrip.jsx';
-import CulturalTrailsPanel from './components/CulturalTrailsPanel.jsx';
 import PlanMyNightModal from './components/PlanMyNightModal.jsx';
+import HomeSectionTabs from './components/HomeSectionTabs.jsx';
+
+const StoriesTabContent = lazy(() => import('./components/StoriesTabContent.jsx'));
+const PlanTabContent = lazy(() => import('./components/PlanTabContent.jsx'));
 
 export default function App() {
   const hash = useHashRoute();
@@ -94,6 +92,8 @@ function HomeView({ hash }) {
   const [loadError, setLoadError] = useState(null);
 
   const [search, setSearch] = useState('');
+  const deferredSearch = useDeferredValue(search);
+  const searchPending = search !== deferredSearch;
   const [filters, setFilters] = useState({
     neighborhood: '',
     category: '',
@@ -114,6 +114,8 @@ function HomeView({ hash }) {
   const [planNightOpen, setPlanNightOpen] = useState(false);
   const [personalizeTick, setPersonalizeTick] = useState(0);
   const [pricePreference, setPricePreferenceState] = useState(() => getPricePreference());
+  const [homeSection, setHomeSection] = useState('events');
+  const [assistantOpen, setAssistantOpen] = useState(false);
 
   const [browseTab, setBrowseTab] = useState('all');
   const [selectedId, setSelectedId] = useState(null);
@@ -150,7 +152,6 @@ function HomeView({ hash }) {
     return [...new Set([...base, ...spotlightLabels])].sort((a, b) => a.localeCompare(b));
   }, [events]);
   const categories = useMemo(() => deriveCategories(events), [events]);
-  const storyPoints = useMemo(() => getStoryMapPoints(), []);
 
   const toggleAccessibility = useCallback((id) => {
     setAccessibilityKeys((prev) => {
@@ -181,7 +182,7 @@ function HomeView({ hash }) {
 
   const discoveryFiltered = useMemo(() => {
     let list = events
-      .filter((e) => matchesQuery(e, search))
+      .filter((e) => matchesQuery(e, deferredSearch))
       .filter((e) => matchesFilters(e, filters))
       .filter((e) => matchesDatePreset(e, datePreset))
       .filter((e) => matchesAccessibilityKeys(e, accessibilityKeys));
@@ -203,7 +204,7 @@ function HomeView({ hash }) {
     return list.sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
   }, [
     events,
-    search,
+    deferredSearch,
     filters,
     datePreset,
     accessibilityKeys,
@@ -254,14 +255,15 @@ function HomeView({ hash }) {
   const forYouUsingFallback = browseTab === 'foryou' && forYouPersonalized.length === 0 && discoverySorted.length > 0;
 
   const tabCounts = useMemo(() => {
-    const fyCount =
-      forYouPersonalized.length || Math.min(20, discoverySorted.length);
-    return {
-      all: discoverySorted.length,
-      foryou: fyCount,
-      featured: discoverySorted.filter((e) => e.featured).length,
-      gems: discoverySorted.filter((e) => e.hiddenGem).length,
-    };
+    let featured = 0;
+    let gems = 0;
+    const all = discoverySorted.length;
+    for (const e of discoverySorted) {
+      if (e.featured) featured += 1;
+      if (e.hiddenGem) gems += 1;
+    }
+    const fyCount = forYouPersonalized.length || Math.min(20, all);
+    return { all, foryou: fyCount, featured, gems };
   }, [discoverySorted, forYouPersonalized]);
 
   const mapEvents = useMemo(
@@ -310,24 +312,24 @@ function HomeView({ hash }) {
     setBrowseTab('all');
   };
 
-  const openStory = (slug) => {
+  const openStory = useCallback((slug) => {
     window.location.hash = `story/${slug}`;
-  };
+  }, []);
 
-  const closeStory = () => {
+  const closeStory = useCallback(() => {
     window.location.hash = '';
-  };
+  }, []);
 
-  const toggleFavEvent = (id) => {
+  const toggleFavEvent = useCallback((id) => {
     const s = toggleFavoriteEvent(id);
     setFavEvents(s);
-  };
+  }, []);
 
-  const toggleFavNH = (label) => {
+  const toggleFavNH = useCallback((label) => {
     toggleFavoriteNeighborhood(label);
     setFavNeighborhoods(getFavoriteNeighborhoods());
     setPersonalizeTick((t) => t + 1);
-  };
+  }, []);
 
   const handleToggleSavedCategory = (name) => {
     toggleSavedCategory(name);
@@ -339,6 +341,17 @@ function HomeView({ hash }) {
     setPricePreferenceState(getPricePreference());
     setPersonalizeTick((t) => t + 1);
   };
+
+  const focusEvent = useCallback((id) => {
+    setSelectedId(id);
+    setHomeSection('events');
+  }, []);
+
+  const sectionFallback = (
+    <div className="flex min-h-[280px] items-center justify-center rounded-2xl border border-zinc-200 bg-white text-sm text-zinc-500">
+      Loading…
+    </div>
+  );
 
   return (
     <div className="min-h-screen bg-zinc-950">
@@ -357,165 +370,179 @@ function HomeView({ hash }) {
             onRetry={loadData}
           />
 
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div className="min-w-0 flex-1">
-              <SearchBar value={search} onChange={setSearch} />
-            </div>
-            {usingFallback ? <DemoDataBadge /> : null}
-          </div>
+          <p className="mt-2 text-center text-sm text-zinc-600 lg:text-left">
+            <strong className="font-semibold text-zinc-800">Events</strong> for listings &amp; map ·{' '}
+            <strong className="font-semibold text-zinc-800">Neighborhood stories</strong> for narratives &amp; zoom map ·{' '}
+            <strong className="font-semibold text-zinc-800">Plan &amp; personalize</strong> for assistant, trails, and For you.
+          </p>
 
-          <div className="mt-8">
-            <NeighborhoodSpotlight
-              neighborhoods={neighborhoods}
-              filters={filters}
-              onFiltersChange={setFilters}
-              onOpenStory={openStory}
-              favoriteNeighborhoods={favNeighborhoods}
-              onToggleFavoriteNeighborhood={toggleFavNH}
-            />
-          </div>
+          <HomeSectionTabs value={homeSection} onChange={setHomeSection} />
 
-          <NeighborhoodVibeStrip onOpenStory={openStory} />
-
-          <FeaturedEventsStrip events={discoverySorted} onSelectEvent={setSelectedId} />
-          <HiddenGemsStrip events={discoverySorted} onSelectEvent={setSelectedId} />
-
-          <div className="mt-8 rounded-3xl border border-zinc-200/80 bg-white/90 p-5 shadow-xl shadow-zinc-900/5 backdrop-blur-sm">
-            <DiscoveryPanel
-              neighborhoods={neighborhoods}
-              categories={categories}
-              filters={filters}
-              onFiltersChange={setFilters}
-              datePreset={datePreset}
-              onDatePresetChange={setDatePreset}
-              accessibilityKeys={accessibilityKeys}
-              onAccessibilityToggle={toggleAccessibility}
-              tonightActive={tonightActive}
-              onTonightToggle={() => setTonightActive((v) => !v)}
-              weekendActive={weekendActive}
-              onWeekendToggle={() => setWeekendActive((v) => !v)}
-              nearTonightActive={nearTonightActive}
-              onNearTonightToggle={() => setNearTonightActive((v) => !v)}
-              onNearTonightRequestGeo={requestNearGeo}
-              smallVenuesActive={smallVenuesActive}
-              onSmallVenuesToggle={() => setSmallVenuesActive((v) => !v)}
-              prioritizeCommunityActive={prioritizeCommunity}
-              onPrioritizeCommunityToggle={() => setPrioritizeCommunity((v) => !v)}
-              savedCategories={savedCategoriesSet}
-              onToggleSavedCategory={handleToggleSavedCategory}
-              pricePreference={pricePreference}
-              onPricePreferenceChange={handlePricePreferenceChange}
-              onOpenPlanMyNight={() => setPlanNightOpen(true)}
-              onSurpriseMe={handleSurpriseMe}
-              geoStatus={geoStatus}
-            />
-          </div>
-
-          <ForYouSection
-            events={discoverySorted}
-            favoriteNeighborhoods={favNeighborhoods}
-            onSelectEvent={setSelectedId}
-          />
-
-          <div className="mt-6">
-            <WalkingTourChooser value={walkingTourSlug} onChange={setWalkingTourSlug} />
-            <WalkingTourPanel activeSlug={walkingTourSlug} onClear={() => setWalkingTourSlug(null)} />
-            <CulturalTrailsPanel
-              events={discoverySorted}
-              onSelectEvent={setSelectedId}
-              onOpenStory={openStory}
-            />
-          </div>
-
-          <div className="mt-8 flex flex-col gap-8 lg:flex-row lg:items-start">
-            <div className="min-w-0 flex-1 lg:max-w-[min(100%,560px)] xl:max-w-[600px]">
-              <BrowseTabs value={browseTab} onChange={setBrowseTab} counts={tabCounts} />
-              {browseTab === 'foryou' ? (
-                <div className="mt-4 space-y-3 rounded-2xl border border-amber-200/80 bg-gradient-to-br from-amber-50/90 to-white p-4 shadow-sm">
-                  <p className="text-sm font-medium text-zinc-800">{forYouInsightLine(forYouCtx, listEvents[0])}</p>
-                  <p className="text-xs italic text-zinc-600">
-                    Example: Because you liked Jackson Ward jazz events, you may also like a poetry night in Church Hill — we
-                    boost listings whose keywords echo stories you&apos;ve opened.
-                  </p>
-                  {forYouUsingFallback ? (
-                    <p className="text-xs font-semibold text-amber-900">
-                      Showing a starter slice of the feed until personalization signals kick in.
-                    </p>
-                  ) : null}
-                  <div>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Explore neighborhoods</p>
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {suggestedNeighborhoods.map((n) => (
-                        <button
-                          key={n}
-                          type="button"
-                          onClick={() => setFilters((f) => ({ ...f, neighborhood: n }))}
-                          className="rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-bold text-zinc-700 hover:border-amber-400"
-                        >
-                          {n}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Suggested stories</p>
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {suggestedStorySlugs.map((s) => {
-                        const st = getStory(s);
-                        return (
-                          <button
-                            key={s}
-                            type="button"
-                            onClick={() => openStory(s)}
-                            className="rounded-full bg-zinc-900 px-3 py-1 text-xs font-bold text-white hover:bg-zinc-800"
-                          >
-                            {st?.title || s}
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
+          {homeSection === 'events' ? (
+            <>
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0 flex-1">
+                  <SearchBar value={search} onChange={setSearch} pending={searchPending} />
                 </div>
-              ) : null}
-              <p className="mt-4 text-sm font-medium text-zinc-500">
-                <span className="font-bold text-zinc-800">{listEvents.length}</span> event
-                {listEvents.length === 1 ? '' : 's'}
-                {browseTab === 'foryou' ? ' · For you tab' : ' · All events feed'} (favorites in browser storage)
-              </p>
-              <div className="mt-5">
-                <EventGrid
-                  loading={loading}
-                  events={listEvents}
-                  selectedId={selectedId}
-                  onSelectEvent={setSelectedId}
-                  emptyMessage={
-                    browseTab === 'foryou'
-                      ? 'Nothing here yet — widen filters or save a few neighborhoods in the spotlight row.'
-                      : 'Nothing matches — try clearing filters, date, or accessibility chips.'
-                  }
-                  favoriteIds={favEvents}
-                  onToggleFavorite={toggleFavEvent}
-                  onOpenStory={openStory}
+                {usingFallback ? <DemoDataBadge /> : null}
+              </div>
+
+              <FeaturedEventsStrip events={discoverySorted} onSelectEvent={setSelectedId} />
+              <HiddenGemsStrip events={discoverySorted} onSelectEvent={setSelectedId} />
+
+              <div className="mt-8 rounded-2xl border border-zinc-200 bg-white p-5 shadow-sm">
+                <DiscoveryPanel
+                  neighborhoods={neighborhoods}
+                  categories={categories}
+                  filters={filters}
+                  onFiltersChange={setFilters}
+                  datePreset={datePreset}
+                  onDatePresetChange={setDatePreset}
+                  accessibilityKeys={accessibilityKeys}
+                  onAccessibilityToggle={toggleAccessibility}
+                  tonightActive={tonightActive}
+                  onTonightToggle={() => setTonightActive((v) => !v)}
+                  weekendActive={weekendActive}
+                  onWeekendToggle={() => setWeekendActive((v) => !v)}
+                  nearTonightActive={nearTonightActive}
+                  onNearTonightToggle={() => setNearTonightActive((v) => !v)}
+                  onNearTonightRequestGeo={requestNearGeo}
+                  smallVenuesActive={smallVenuesActive}
+                  onSmallVenuesToggle={() => setSmallVenuesActive((v) => !v)}
+                  prioritizeCommunityActive={prioritizeCommunity}
+                  onPrioritizeCommunityToggle={() => setPrioritizeCommunity((v) => !v)}
+                  savedCategories={savedCategoriesSet}
+                  onToggleSavedCategory={handleToggleSavedCategory}
+                  pricePreference={pricePreference}
+                  onPricePreferenceChange={handlePricePreferenceChange}
+                  onOpenPlanMyNight={() => {
+                    setPlanNightOpen(true);
+                    setHomeSection('plan');
+                  }}
+                  onSurpriseMe={handleSurpriseMe}
+                  geoStatus={geoStatus}
                 />
               </div>
-            </div>
 
-            <div className="w-full shrink-0 lg:sticky lg:top-24 lg:w-[min(100%,460px)] xl:w-[500px]">
-              <EventMap
-                events={mapEvents}
-                selectedId={selectedId}
-                onSelectEvent={setSelectedId}
-                storyPoints={storyPoints}
-                historicPolygons={HISTORIC_DISTRICT_POLYGONS}
-                artsPolygons={ARTS_DISTRICT_POLYGONS}
-                onStoryPinClick={openStory}
-                mapContentFilters={mapContentFilters}
-                onMapContentFilterToggle={onMapContentFilterToggle}
-                showTransit={showMapTransit}
-                onShowTransitToggle={() => setShowMapTransit((v) => !v)}
+              <div className="mt-8 flex flex-col gap-8 lg:flex-row lg:items-start">
+                <div className="min-w-0 flex-1 lg:max-w-[min(100%,560px)] xl:max-w-[600px]">
+                  <BrowseTabs value={browseTab} onChange={setBrowseTab} counts={tabCounts} />
+                  {browseTab === 'foryou' ? (
+                    <div className="mt-4 space-y-3 rounded-2xl border border-amber-200/80 bg-gradient-to-br from-amber-50/90 to-white p-4 shadow-sm">
+                      <p className="text-sm font-medium text-zinc-800">{forYouInsightLine(forYouCtx, listEvents[0])}</p>
+                      <p className="text-xs italic text-zinc-600">
+                        Example: Because you liked Jackson Ward jazz events, you may also like a poetry night in Church Hill — we
+                        boost listings whose keywords echo stories you&apos;ve opened.
+                      </p>
+                      {forYouUsingFallback ? (
+                        <p className="text-xs font-semibold text-amber-900">
+                          Showing a starter slice of the feed until personalization signals kick in.
+                        </p>
+                      ) : null}
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Explore neighborhoods</p>
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {suggestedNeighborhoods.map((n) => (
+                            <button
+                              key={n}
+                              type="button"
+                              onClick={() => setFilters((f) => ({ ...f, neighborhood: n }))}
+                              className="rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-bold text-zinc-700 hover:border-amber-400"
+                            >
+                              {n}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                      <div>
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Suggested stories</p>
+                        <div className="mt-2 flex flex-wrap gap-2">
+                          {suggestedStorySlugs.map((s) => {
+                            const st = getStory(s);
+                            return (
+                              <button
+                                key={s}
+                                type="button"
+                                onClick={() => openStory(s)}
+                                className="rounded-full bg-zinc-900 px-3 py-1 text-xs font-bold text-white hover:bg-zinc-800"
+                              >
+                                {st?.title || s}
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    </div>
+                  ) : null}
+                  <p className="mt-4 text-sm font-medium text-zinc-500">
+                    <span className="font-bold text-zinc-800">{listEvents.length}</span> event
+                    {listEvents.length === 1 ? '' : 's'}
+                    {browseTab === 'foryou' ? ' · For you' : ''} · favorites saved in this browser
+                  </p>
+                  <div className="mt-5">
+                    <EventGrid
+                      loading={loading}
+                      events={listEvents}
+                      selectedId={selectedId}
+                      onSelectEvent={setSelectedId}
+                      emptyMessage={
+                        browseTab === 'foryou'
+                          ? 'Nothing here yet — widen filters or save neighborhoods under Stories.'
+                          : 'Nothing matches — try clearing filters, date, or accessibility chips.'
+                      }
+                      favoriteIds={favEvents}
+                      onToggleFavorite={toggleFavEvent}
+                      onOpenStory={openStory}
+                    />
+                  </div>
+                </div>
+
+                <div className="w-full shrink-0 lg:sticky lg:top-24 lg:w-[min(100%,460px)] xl:w-[500px]">
+                  <DeferredEventMap
+                    events={mapEvents}
+                    selectedId={selectedId}
+                    onSelectEvent={setSelectedId}
+                    storyPoints={[]}
+                    historicPolygons={[]}
+                    artsPolygons={ARTS_DISTRICT_POLYGONS}
+                    mapContentFilters={mapContentFilters}
+                    onMapContentFilterToggle={onMapContentFilterToggle}
+                    showTransit={showMapTransit}
+                    onShowTransitToggle={() => setShowMapTransit((v) => !v)}
+                  />
+                </div>
+              </div>
+            </>
+          ) : null}
+
+          {homeSection === 'stories' ? (
+            <Suspense fallback={sectionFallback}>
+              <StoriesTabContent
+                neighborhoods={neighborhoods}
+                filters={filters}
+                onFiltersChange={setFilters}
+                onOpenStory={openStory}
+                favoriteNeighborhoods={favNeighborhoods}
+                onToggleFavoriteNeighborhood={toggleFavNH}
+                onSwitchToEventsTab={() => setHomeSection('events')}
               />
-            </div>
-          </div>
+            </Suspense>
+          ) : null}
+
+          {homeSection === 'plan' ? (
+            <Suspense fallback={sectionFallback}>
+              <PlanTabContent
+                discoverySorted={discoverySorted}
+                favoriteNeighborhoods={favNeighborhoods}
+                onSelectEvent={focusEvent}
+                walkingTourSlug={walkingTourSlug}
+                onWalkingTourChange={setWalkingTourSlug}
+                onOpenStory={openStory}
+                onOpenPlanMyNight={() => setPlanNightOpen(true)}
+                onOpenAssistant={() => setAssistantOpen(true)}
+              />
+            </Suspense>
+          ) : null}
         </div>
 
         <SourcesTrustSection />
@@ -527,8 +554,14 @@ function HomeView({ hash }) {
 
       <PlanningChatAssistant
         events={events}
-        onSelectEvent={setSelectedId}
-        onOpenPlanMyNight={() => setPlanNightOpen(true)}
+        onSelectEvent={focusEvent}
+        onOpenPlanMyNight={() => {
+          setPlanNightOpen(true);
+          setHomeSection('plan');
+        }}
+        isOpen={assistantOpen}
+        onOpen={() => setAssistantOpen(true)}
+        onClose={() => setAssistantOpen(false)}
       />
 
       <PlanMyNightModal
