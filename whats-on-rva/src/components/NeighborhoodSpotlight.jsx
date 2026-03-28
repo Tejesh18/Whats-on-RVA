@@ -45,17 +45,13 @@ export default function NeighborhoodSpotlight({
                 >
                   Show events
                 </button>
-                {s.storySlug ? (
-                  <button
-                    type="button"
-                    onClick={() => onOpenStory?.(s.storySlug)}
-                    className="w-full rounded-xl border border-violet-200 bg-violet-50 py-2 text-xs font-bold text-violet-900 hover:bg-violet-100"
-                  >
-                    Explore story
-                  </button>
-                ) : (
-                  <p className="text-center text-[10px] text-zinc-400">Story coming soon</p>
-                )}
+                <button
+                  type="button"
+                  onClick={() => onOpenStory?.(s.storySlug)}
+                  className="w-full rounded-xl border border-violet-200 bg-violet-50 py-2 text-xs font-bold text-violet-900 hover:bg-violet-100"
+                >
+                  Explore story
+                </button>
                 <button
                   type="button"
                   aria-label={`Save ${s.label} for For you`}

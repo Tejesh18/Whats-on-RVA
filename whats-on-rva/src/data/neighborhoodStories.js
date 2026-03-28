@@ -3,7 +3,14 @@
  * Hash routes: #story/jackson-ward
  */
 
-export const STORY_SLUGS = ['jackson-ward', 'church-hill', 'blackwell'];
+export const STORY_SLUGS = [
+  'jackson-ward',
+  'church-hill',
+  'blackwell',
+  'carytown',
+  'scotts-addition',
+  'manchester',
+];
 
 /**
  * Top spotlight row (spec): Jackson Ward, Church Hill, Carytown, Scott's Addition, Manchester.
@@ -12,9 +19,9 @@ export const STORY_SLUGS = ['jackson-ward', 'church-hill', 'blackwell'];
 export const NEIGHBORHOOD_SPOTLIGHTS = [
   { id: 'jackson-ward', label: 'Jackson Ward', match: /jackson/i, storySlug: 'jackson-ward' },
   { id: 'church-hill', label: 'Church Hill', match: /church hill/i, storySlug: 'church-hill' },
-  { id: 'carytown', label: 'Carytown', match: /carytown/i, storySlug: null },
-  { id: 'scotts-addition', label: "Scott's Addition", match: /scott/i, storySlug: null },
-  { id: 'manchester', label: 'Manchester', match: /manchester/i, storySlug: null },
+  { id: 'carytown', label: 'Carytown', match: /carytown/i, storySlug: 'carytown' },
+  { id: 'scotts-addition', label: "Scott's Addition", match: /scott/i, storySlug: 'scotts-addition' },
+  { id: 'manchester', label: 'Manchester', match: /manchester/i, storySlug: 'manchester' },
 ];
 
 export const NEIGHBORHOOD_STORY_BY_SLUG = {
@@ -278,6 +285,241 @@ export const NEIGHBORHOOD_STORY_BY_SLUG = {
     },
     storyMapPoint: { lat: 37.518, lng: -77.454 },
     eventNeighborhoodHints: [/blackwell/i, /southside/i],
+  },
+  carytown: {
+    slug: 'carytown',
+    neighborhoodTag: 'Carytown',
+    title: 'Carytown — The strip that walks',
+    subtitle: 'Retail, food, and casual night life on one mile',
+    heroImage: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=1200&q=80',
+    shortDescription:
+      'Cary Street’s dense storefront rhythm makes it one of Richmond’s easiest cultural walks — indie shops, restaurants, pop-ups, and small stages spill onto the sidewalk most weekends.',
+    cultureKeywords: [
+      /carytown/i,
+      /retail/i,
+      /pop-?up/i,
+      /film/i,
+      /market/i,
+      /live music/i,
+      /food/i,
+      /dining/i,
+    ],
+    sections: [
+      {
+        heading: 'Why Carytown feels different',
+        body: 'Short blocks and mixed storefronts mean you can browse, eat, and catch a show without a car — the strip rewards slow pacing and return visits.',
+      },
+      {
+        heading: 'Night life without stadium scale',
+        body: 'Think listening rooms, comedy, film nights, and DJ-forward bars — the energy is neighborhood-first, not mega-venue.',
+      },
+    ],
+    timeline: [
+      {
+        year: 'Streetcar era',
+        text: 'Commercial strips knit residential Richmond to regional shopping — Cary Street thickened with small owners.',
+        image: 'https://images.unsplash.com/photo-1555529908-41e7d45838f5?w=600&q=80',
+        snippet: 'Windows changed faster than street names — same walk, new paint.',
+        themeTags: ['history', 'walking', 'market'],
+      },
+      {
+        year: 'Indie retail wave',
+        text: 'Boutiques, record bins, and eateries replaced some chains — the mile became a destination for locals first.',
+        image: 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?w=600&q=80',
+        snippet: 'Saturday foot traffic became the default calendar.',
+        themeTags: ['market', 'food', 'live'],
+      },
+      {
+        year: 'Today’s mix',
+        text: 'Festivals, sidewalk sales, and late kitchens keep the strip loud in the best way.',
+        image: 'https://images.unsplash.com/photo-1517457373958-b18bdd1bc937?w=600&q=80',
+        snippet: 'You can plan dinner and stumble into music — still Carytown.',
+        themeTags: ['music', 'family', 'outdoor'],
+      },
+    ],
+    beforeAfter: {
+      beforeUrl: 'https://images.unsplash.com/photo-1555529908-41e7d45838f5?w=900&q=80',
+      afterUrl: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=900&q=80',
+      caption: 'Illustrative: quieter mid-century retail frontage vs today’s busier, mixed-use Cary Street energy.',
+    },
+    whatChanged: {
+      pastKnown: 'A practical shopping corridor tied to streetcar commutes.',
+      presentKnown: 'A walkable culture strip — food, film, music, and retail in one breath.',
+      why: 'Zoning patience, small-lot ownership, and audiences who want density without downtown towers.',
+    },
+    communityVoices: [
+      {
+        text: '“We plan dinner and let the block decide the rest of the night.”',
+        attribution: 'Illustrative shopper voice',
+      },
+    ],
+    keyPlaces: [
+      { category: 'Walk', name: 'Cary Street spine', note: 'Start mid-strip and loop — alleys hide murals and patios.' },
+      { category: 'Culture', name: 'The Byrd & neighbors', note: 'Film and small venues anchor the calendar — check marquees.' },
+      { category: 'Food', name: 'Cross-street kitchens', note: 'Side streets add quieter tables when the main drag is packed.' },
+    ],
+    quote: {
+      text: '“It’s one mile that still feels like a neighborhood.”',
+      attribution: 'Illustrative Carytown voice',
+    },
+    storyMapPoint: { lat: 37.5555, lng: -77.486 },
+    eventNeighborhoodHints: [/carytown/i],
+  },
+  'scotts-addition': {
+    slug: 'scotts-addition',
+    neighborhoodTag: "Scott's Addition",
+    title: "Scott's Addition — Breweries & creative nights",
+    subtitle: 'From industrial yards to tasting rooms and comedy',
+    heroImage: 'https://images.unsplash.com/photo-1532634922-8fe0b757fb13?w=1200&q=80',
+    shortDescription:
+      'Warehouses turned into tasting rooms, food halls, and small stages — Scott’s Addition is where Richmond experiments with density, patios, and late-week energy.',
+    cultureKeywords: [
+      /scott/i,
+      /brew/i,
+      /comedy/i,
+      /food hall/i,
+      /dj/i,
+      /nightlife/i,
+      /tasting/i,
+    ],
+    sections: [
+      {
+        heading: 'Industrial bones, social reuse',
+        body: 'Large footprints became shared spaces — breweries, food vendors, and offices stack audiences who spill onto patios.',
+      },
+      {
+        heading: 'A young night-time economy',
+        body: 'Comedy, DJ sets, and pop-ups rotate fast — the neighborhood rewards checking listings weekly.',
+      },
+    ],
+    timeline: [
+      {
+        year: 'Industrial grid',
+        text: 'Rail-adjacent work yards — daytime noise, nighttime quiet.',
+        image: 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=600&q=80',
+        snippet: 'Trucks in, workers out — few imagined patio lights.',
+        themeTags: ['history', 'walking'],
+      },
+      {
+        year: 'Reuse wave',
+        text: 'Breweries and makers claimed volume — patios became the new front door.',
+        image: 'https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?w=600&q=80',
+        snippet: 'Flight boards replaced shift boards.',
+        themeTags: ['food', 'market', 'live'],
+      },
+      {
+        year: 'Creative corridor',
+        text: 'Offices, food halls, and small venues share blocks — Thursday-to-Saturday is the pulse.',
+        image: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=600&q=80',
+        snippet: 'One parking lot can host three different crowds in a night.',
+        themeTags: ['music', 'comedy', 'nightlife'],
+      },
+    ],
+    beforeAfter: {
+      beforeUrl: 'https://images.unsplash.com/photo-1581092160562-40aa08e78837?w=900&q=80',
+      afterUrl: 'https://images.unsplash.com/photo-1532634922-8fe0b757fb13?w=900&q=80',
+      caption: 'Illustrative: industrial yard stillness vs lit patios and tasting rooms today.',
+    },
+    whatChanged: {
+      pastKnown: 'Work yards and light industry south of the Fan.',
+      presentKnown: 'Destination dining, craft drink culture, and creative offices.',
+      why: 'Adaptive reuse financing, a hunger for outdoor rooms, and audiences who want variety in one walk.',
+    },
+    communityVoices: [
+      {
+        text: '“We moved here for the patios — stayed for the comedy and food hall nights.”',
+        attribution: 'Illustrative resident line',
+      },
+    ],
+    keyPlaces: [
+      { category: 'Drink', name: 'Tasting room row', note: 'Sample responsibly — many spots host live DJs or trivia.' },
+      { category: 'Laugh', name: 'Comedy & small stages', note: 'Check calendars; rooms fill on short notice.' },
+      { category: 'Eat', name: 'Food halls & patios', note: 'Shared tables mean shorter waits at peak hours.' },
+    ],
+    quote: {
+      text: '“It’s loud in the friendliest way — everyone’s comparing flight notes on the sidewalk.”',
+      attribution: "Illustrative Scott's Addition voice",
+    },
+    storyMapPoint: { lat: 37.565, lng: -77.478 },
+    eventNeighborhoodHints: [/scott/i, /addition/i],
+  },
+  manchester: {
+    slug: 'manchester',
+    neighborhoodTag: 'Manchester',
+    title: 'Manchester — South of the river',
+    subtitle: 'Views, renewal, and neighborhood-scale culture',
+    heroImage: 'https://images.unsplash.com/photo-1506976785307-8732e854ad03?w=1200&q=80',
+    shortDescription:
+      'Across the James from downtown, Manchester mixes river views, residential renewal, and grassroots events — a different angle on the same skyline.',
+    cultureKeywords: [
+      /manchester/i,
+      /river/i,
+      /james/i,
+      /south of the river/i,
+      /market/i,
+      /pop-?up/i,
+      /porch/i,
+    ],
+    sections: [
+      {
+        heading: 'A ridge with a view',
+        body: 'Elevations toward the river frame the city — sunset walks here are a Richmond ritual for many south-of-downtown residents.',
+      },
+      {
+        heading: 'Growth with memory',
+        body: 'New construction sits beside older fabric — block clubs and small orgs still anchor how culture happens on the ground.',
+      },
+    ],
+    timeline: [
+      {
+        year: 'River city',
+        text: 'Industry and housing shared the slope toward the James.',
+        image: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=600&q=80',
+        snippet: 'Smoke and steeples in the same photograph.',
+        themeTags: ['river', 'history', 'walking'],
+      },
+      {
+        year: 'Residential shift',
+        text: 'Renewal brought new neighbors — porches stayed the social network.',
+        image: 'https://images.unsplash.com/photo-1564013799919-ab600027ffc6?w=600&q=80',
+        snippet: 'Yard sales became porch playlists.',
+        themeTags: ['community', 'outdoor'],
+      },
+      {
+        year: 'Today',
+        text: 'Pop-ups, river access, and small markets stitch the hill together.',
+        image: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f290?w=600&q=80',
+        snippet: 'Same skyline — shorter walk home.',
+        themeTags: ['market', 'family', 'river'],
+      },
+    ],
+    beforeAfter: {
+      beforeUrl: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=80',
+      afterUrl: 'https://images.unsplash.com/photo-1506976785307-8732e854ad03?w=900&q=80',
+      caption: 'Illustrative: heavier industrial river edge vs today’s residential and mixed riverfront use.',
+    },
+    whatChanged: {
+      pastKnown: 'River-adjacent work and tight residential rows.',
+      presentKnown: 'Mixed housing, skyline views, and neighbor-led culture.',
+      why: 'Housing demand, river access investments, and organizers who program the hill like a venue.',
+    },
+    communityVoices: [
+      {
+        text: '“We watch the same downtown lights — just from the quiet side of the river.”',
+        attribution: 'Illustrative Manchester voice',
+      },
+    ],
+    keyPlaces: [
+      { category: 'Views', name: 'River overlooks', note: 'Golden hour walks — bring a jacket off the water.' },
+      { category: 'Streets', name: 'Hull & Commerce corridors', note: 'Follow flyers for pop-ups and porch nights.' },
+      { category: 'Connect', name: 'Bridges & trails', note: 'Link to downtown or southside paths before a show.' },
+    ],
+    quote: {
+      text: '“Manchester taught me the city has two front doors.”',
+      attribution: 'Illustrative resident line',
+    },
+    storyMapPoint: { lat: 37.525, lng: -77.445 },
+    eventNeighborhoodHints: [/manchester/i],
   },
 };
 

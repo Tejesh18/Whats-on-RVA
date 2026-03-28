@@ -28,7 +28,7 @@ export const NEIGHBORHOOD_VIBES = [
     tags: ['Walkable', 'Indie shops', 'Live music', 'Food + arts'],
   },
   {
-    id: 'scotts',
+    id: 'scotts-addition',
     name: "Scott's Addition",
     bestKnownFor: 'Breweries, creative offices, young nightlife',
     typicalEvents: 'Tasting rooms, comedy, DJ sets, food halls',
