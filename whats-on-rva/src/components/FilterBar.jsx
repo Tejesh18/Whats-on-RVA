@@ -10,22 +10,22 @@ export default function FilterBar({
   onTonightClick,
 }) {
   return (
-    <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-      <div className="grid flex-1 gap-4 sm:grid-cols-3">
+    <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between lg:gap-4">
+      <div className="grid flex-1 gap-3 sm:grid-cols-3">
         <div>
           <label
             htmlFor="filter-neighborhood"
-            className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-rva-slate/70"
+            className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-rva-slate/55"
           >
-            Neighborhood
+            Area
           </label>
           <select
             id="filter-neighborhood"
             value={filters.neighborhood}
             onChange={(e) => onChange({ ...filters, neighborhood: e.target.value })}
-            className="w-full rounded-lg border border-rva-slate/15 bg-white px-3 py-2.5 text-sm text-rva-slate shadow-sm outline-none ring-rva-gold/30 focus:ring-2"
+            className="w-full rounded-lg border border-rva-slate/15 bg-white px-2.5 py-2 text-sm text-rva-slate shadow-sm outline-none ring-rva-gold/30 focus:ring-2"
           >
-            <option value="">All neighborhoods</option>
+            <option value="">All areas</option>
             {neighborhoods.map((n) => (
               <option key={n} value={n}>
                 {n}
@@ -36,7 +36,7 @@ export default function FilterBar({
         <div>
           <label
             htmlFor="filter-category"
-            className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-rva-slate/70"
+            className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-rva-slate/55"
           >
             Category
           </label>
@@ -44,9 +44,9 @@ export default function FilterBar({
             id="filter-category"
             value={filters.category}
             onChange={(e) => onChange({ ...filters, category: e.target.value })}
-            className="w-full rounded-lg border border-rva-slate/15 bg-white px-3 py-2.5 text-sm text-rva-slate shadow-sm outline-none ring-rva-gold/30 focus:ring-2"
+            className="w-full rounded-lg border border-rva-slate/15 bg-white px-2.5 py-2 text-sm text-rva-slate shadow-sm outline-none ring-rva-gold/30 focus:ring-2"
           >
-            <option value="">All categories</option>
+            <option value="">All types</option>
             {categories.map((c) => (
               <option key={c} value={c}>
                 {c}
@@ -57,37 +57,37 @@ export default function FilterBar({
         <div>
           <label
             htmlFor="filter-price"
-            className="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-rva-slate/70"
+            className="mb-1 block text-[11px] font-semibold uppercase tracking-wide text-rva-slate/55"
           >
-            Free vs paid
+            Price
           </label>
           <select
             id="filter-price"
             value={filters.price}
             onChange={(e) => onChange({ ...filters, price: e.target.value })}
-            className="w-full rounded-lg border border-rva-slate/15 bg-white px-3 py-2.5 text-sm text-rva-slate shadow-sm outline-none ring-rva-gold/30 focus:ring-2"
+            className="w-full rounded-lg border border-rva-slate/15 bg-white px-2.5 py-2 text-sm text-rva-slate shadow-sm outline-none ring-rva-gold/30 focus:ring-2"
           >
-            <option value="">All events</option>
+            <option value="">Any</option>
             <option value="free">Free only</option>
             <option value="paid">Paid only</option>
           </select>
         </div>
       </div>
       <div className="shrink-0">
-        <span className="mb-1.5 hidden text-xs font-semibold uppercase tracking-wide text-rva-slate/70 lg:block">
-          Quick action
+        <span className="mb-1 hidden text-[11px] font-semibold uppercase tracking-wide text-rva-slate/55 lg:block">
+          Quick
         </span>
         <button
           type="button"
           onClick={onTonightClick}
           aria-pressed={tonightActive}
-          className={`w-full rounded-lg px-5 py-2.5 text-sm font-semibold shadow-sm transition focus:outline-none focus:ring-2 focus:ring-rva-gold focus:ring-offset-2 focus:ring-offset-rva-cream lg:w-auto ${
+          className={`w-full rounded-lg px-4 py-2 text-sm font-semibold shadow-sm transition focus:outline-none focus:ring-2 focus:ring-rva-gold focus:ring-offset-2 focus:ring-offset-white lg:w-auto ${
             tonightActive
-              ? 'bg-rva-gold text-rva-slate ring-2 ring-rva-gold ring-offset-2 ring-offset-rva-cream'
+              ? 'bg-rva-gold text-rva-slate ring-2 ring-rva-gold ring-offset-2 ring-offset-white'
               : 'bg-rva-brick text-white hover:bg-rva-brick/90'
           }`}
         >
-          Tonight in RVA
+          Tonight
         </button>
       </div>
     </div>

@@ -1,12 +1,12 @@
 /**
- * Mock arts & culture events for the Hack for RVA demo (fallback when APIs fail).
+ * Example Richmond-area events when the live calendar feed is unavailable.
  * Date math uses the configured metro timezone (see config/env.js).
  */
 
 import { richmondTimeZone as RICHMOND_TZ } from '../config/env.js';
 
 /**
- * Same fields as `NormalizedEvent` (see lib/normalizedEvent.js) — mock adapter output.
+ * Same fields as `NormalizedEvent` (lib/normalizedEvent.js).
  * @typedef {Object} AppEvent
  * @property {string} id
  * @property {string} title
@@ -25,6 +25,8 @@ import { richmondTimeZone as RICHMOND_TZ } from '../config/env.js';
  * @property {boolean} hiddenGem
  * @property {string[]} tags
  * @property {string[]} accessibilityBadges
+ * @property {number} latitude
+ * @property {number} longitude
  */
 
 export {};
@@ -105,13 +107,15 @@ const staticEvents = [
     price: null,
     description:
       'Opening reception for a group show spotlighting contemporary painters with ties to the Mid-Atlantic.',
-    sourceName: 'Visit Richmond VA (sample)',
+    sourceName: 'Visit Richmond VA',
     sourceUrl: 'https://www.visitrichmondva.com/',
     imageUrl: 'https://images.unsplash.com/photo-1541961017774-11249b4b3439?w=800&q=80',
     featured: true,
     hiddenGem: false,
     tags: ['gallery', 'opening', 'First Friday', 'visual art'],
     accessibilityBadges: [],
+    latitude: 37.5512,
+    longitude: -77.4754,
     _startOffsetDays: 5,
     _startHour: 17,
     _durationH: 3,
@@ -128,13 +132,15 @@ const staticEvents = [
     price: '$12',
     description:
       'Intimate second set with local horns and rhythm section — standards, originals, and a few RVA shout-outs.',
-    sourceName: 'Venue calendar (sample)',
+    sourceName: 'Venue listing',
     sourceUrl: 'https://thecamel.org/',
     imageUrl: 'https://images.unsplash.com/photo-1415201367414-f6f34022c59e?w=800&q=80',
     featured: true,
     hiddenGem: false,
     tags: ['jazz', 'live music', 'nightlife'],
     accessibilityBadges: [],
+    latitude: 37.5659,
+    longitude: -77.4749,
     _tonight: true,
     _startHour: 21,
     _durationH: 2,
@@ -151,13 +157,15 @@ const staticEvents = [
     price: null,
     description:
       'Volunteer-led walk through recent murals and legacy landmarks — BYO water bottle, easy pace.',
-    sourceName: 'Neighborhood org (sample)',
+    sourceName: 'Community calendar',
     sourceUrl: 'https://www.rva.gov/',
     imageUrl: 'https://images.unsplash.com/photo-1561214115-f2f134cc4912?w=800&q=80',
     featured: false,
     hiddenGem: true,
     tags: ['mural', 'walking tour', 'community', 'public art'],
     accessibilityBadges: ['Outdoor route — pace may vary'],
+    latitude: 37.5491,
+    longitude: -77.4377,
     _startOffsetDays: 2,
     _startHour: 10,
     _durationH: 2,
@@ -174,13 +182,15 @@ const staticEvents = [
     price: null,
     description:
       'Five-minute slots for poets and storytellers; sign-ups at 6:30. Donations welcome for the host collective.',
-    sourceName: 'Community calendar (sample)',
+    sourceName: 'Richmond Arts',
     sourceUrl: 'https://www.rva.gov/richmond-art',
     imageUrl: 'https://images.unsplash.com/photo-1455390582262-044cdead277a?w=800&q=80',
     featured: false,
     hiddenGem: true,
     tags: ['poetry', 'open mic', 'literary'],
     accessibilityBadges: [],
+    latitude: 37.5269,
+    longitude: -77.4177,
     _startOffsetDays: 3,
     _startHour: 19,
     _durationH: 2,
@@ -197,13 +207,15 @@ const staticEvents = [
     price: null,
     description:
       'Regional makers, live acoustic sets, and food vendors celebrating RVA’s creative small businesses.',
-    sourceName: 'Market calendar (sample)',
+    sourceName: '17th Street Market',
     sourceUrl: 'https://www.rva.gov/',
     imageUrl: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?w=800&q=80',
     featured: false,
     hiddenGem: false,
     tags: ['market', 'makers', 'food', 'music'],
     accessibilityBadges: ['Wheelchair Accessible'],
+    latitude: 37.5312,
+    longitude: -77.4291,
     _startOffsetDays: 6,
     _startHour: 11,
     _durationH: 5,
@@ -220,13 +232,15 @@ const staticEvents = [
     price: '$28',
     description:
       'Original sketch-and-song revue about life along the James — matinee and evening performances this weekend.',
-    sourceName: 'Theatre calendar (sample)',
+    sourceName: 'Firehouse Theatre',
     sourceUrl: 'https://www.firehousetheatre.org/',
     imageUrl: 'https://images.unsplash.com/photo-1503095396549-807759245b35?w=800&q=80',
     featured: true,
     hiddenGem: false,
     tags: ['theatre', 'comedy', 'local'],
     accessibilityBadges: [],
+    latitude: 37.5477,
+    longitude: -77.4542,
     _startOffsetDays: 7,
     _startHour: 19,
     _durationH: 2,
@@ -243,13 +257,15 @@ const staticEvents = [
     price: null,
     description:
       'Hyper-local ceramics, zines, and baked goods — school PTA fundraiser with kid-friendly art tables.',
-    sourceName: 'School / community (sample)',
+    sourceName: 'Bellevue Elementary PTA',
     sourceUrl: 'https://www.rva.gov/',
     imageUrl: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',
     featured: false,
     hiddenGem: true,
     tags: ['craft', 'PTA', 'family'],
     accessibilityBadges: [],
+    latitude: 37.598,
+    longitude: -77.441,
     _startOffsetDays: 4,
     _startHour: 10,
     _durationH: 4,
@@ -266,13 +282,15 @@ const staticEvents = [
     price: null,
     description:
       'Low-key acoustic circle as the sun sets over the James — bring a blanket; no amps, leave-no-trace.',
-    sourceName: 'Parks programming (sample)',
+    sourceName: 'James River Park',
     sourceUrl: 'https://www.jamesriverpark.org/',
     imageUrl: 'https://images.unsplash.com/photo-1470229722913-7c0e2dbbafd3?w=800&q=80',
     featured: false,
     hiddenGem: true,
     tags: ['outdoor', 'acoustic', 'James River'],
     accessibilityBadges: ['Unpaved / natural surface'],
+    latitude: 37.5348,
+    longitude: -77.4445,
     _tonight: true,
     _startHour: 18,
     _durationH: 2,

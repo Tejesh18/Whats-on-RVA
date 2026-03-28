@@ -1,6 +1,4 @@
-/**
- * Pure helpers over NormalizedEvent-shaped objects (never raw API nodes).
- */
+/** Search, filters, and date helpers for event objects. */
 import { todayYmdRichmond } from '../data/mockEvents.js';
 import { richmondTimeZone as RICHMOND_TZ } from '../config/env.js';
 

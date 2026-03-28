@@ -1,16 +1,5 @@
 /**
- * Event orchestration — the only service the React tree should use for event lists.
- * All HTTP / file-shaped logic stays in sourceAdapters.js or here; never in components.
- *
- * ─── Future: merge multiple sources (plug in here) ─────────────────────────
- *   const [a, b, c] = await Promise.all([
- *     fetchCultureWorksEvents(),
- *     fetchEventbriteEvents(),
- *     fetchRssEvents(),
- *   ]);
- *   const merged = dedupeBySourceUrl([...a, ...b, ...c]);
- *   return { events: merged, usingFallback: false };
- * Until then: primary = CultureWorks; empty/error → fetchMockNormalized via fetchMockEvents().
+ * Loads events for the app. UI should use `getEvents()` only.
  */
 
 import { cultureWorksEventsUrl } from '../config/env.js';
@@ -26,25 +15,21 @@ export async function fetchMockEvents() {
   return fetchMockNormalized();
 }
 
-/** Primary live source — CultureWorks Localist (URL from env). */
 export async function fetchCultureWorksEvents() {
   return fetchCultureWorksNormalized(cultureWorksEventsUrl);
 }
 
-/**
- * Eventbrite placeholder — implement fetchEventbriteNormalized when org/venue IDs are available.
- */
+/** Reserved — returns [] until implemented. */
 export async function fetchEventbriteEvents() {
   return fetchEventbriteNormalized();
 }
 
-/** RSS placeholder — implement fetchRssNormalized when feed URLs are configured. */
+/** Reserved — returns [] until implemented. */
 export async function fetchRssEvents() {
   return fetchRssNormalized();
 }
 
 /**
- * App entry: primary adapter → automatic mock fallback (same NormalizedEvent[] contract).
  * @returns {Promise<{ events: import('../lib/normalizedEvent.js').NormalizedEvent[]; usingFallback: boolean }>}
  */
 export async function getEvents() {
@@ -54,10 +39,9 @@ export async function getEvents() {
       return { events: live, usingFallback: false };
     }
   } catch {
-    // Browser CORS, offline, non-JSON, etc. — always recover with mock adapter.
+    /* network, CORS, etc. */
   }
 
-  // Empty live response is treated like failure so judges always see a full UI.
   const fallback = await fetchMockEvents();
   return { events: fallback, usingFallback: true };
 }

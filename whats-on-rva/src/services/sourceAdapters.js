@@ -1,23 +1,11 @@
 /**
- * Source adapters — only place that may know raw API / feed shapes.
- *
- * Pattern (repeat per source):
- *   1. fetch (or read) the raw payload.
- *   2. map each record through a normalize* function → NormalizedEvent (see lib/normalizedEvent.js).
- *   3. export fetch*Normalized() returning NormalizedEvent[].
- *
- * Plug-in points for new sources:
- *   • Eventbrite → implement fetchEventbriteNormalized() body; call from eventService.getEvents() when ready.
- *   • RSS       → implement fetchRssNormalized() body; same merge step.
- *   • Mock      → fetchMockNormalized() — bundled fallback, same schema as live adapters.
- *
- * UI and components must never import this file — only eventService.js orchestrates adapters.
+ * Fetches raw CultureWorks JSON and maps it to the app’s event shape.
+ * Other fetch helpers here return [] until implemented.
  */
 
 import { mockEvents } from '../data/mockEvents.js';
 import { cultureWorksEventsUrl, defaultEventImageUrl } from '../config/env.js';
 
-/** Bundled fallback — already NormalizedEvent-shaped; keeps mock on the same adapter path as live sources. */
 export async function fetchMockNormalized() {
   return Promise.resolve([...mockEvents]);
 }
@@ -56,11 +44,6 @@ function detailViewsBelow(e, max) {
   return typeof v !== 'number' || v <= max;
 }
 
-/**
- * Map one Localist API node to NormalizedEvent.
- * @param {object} node — `{ event: {...} }` or raw event object
- * @param {string} fallbackListingUrl — used when event has no external URL
- */
 export function normalizeCultureWorksNode(node, fallbackListingUrl) {
   const e = node.event ?? node;
   const inst = e.event_instances?.[0]?.event_instance;
@@ -141,6 +124,9 @@ export function normalizeCultureWorksNode(node, fallbackListingUrl) {
   const sourceUrl =
     (e.url && String(e.url).trim()) || e.localist_url || fallbackListingUrl;
 
+  const lat = parseFloat(e.geo?.latitude);
+  const lng = parseFloat(e.geo?.longitude);
+
   return {
     id: `cw-${e.id}`,
     title: e.title || 'Untitled event',
@@ -152,20 +138,18 @@ export function normalizeCultureWorksNode(node, fallbackListingUrl) {
     isFree,
     price,
     description,
-    sourceName: 'CultureWorks Localist',
+    sourceName: 'CultureWorks',
     sourceUrl,
     imageUrl: e.photo_url || defaultEventImageUrl,
     featured,
     hiddenGem,
     tags: uniqueTags,
     accessibilityBadges,
+    latitude: Number.isFinite(lat) ? lat : null,
+    longitude: Number.isFinite(lng) ? lng : null,
   };
 }
 
-/**
- * Fetch CultureWorks Localist and return normalized events (empty array on hard failure).
- * @param {string} [eventsUrl] — defaults from env via caller
- */
 export async function fetchCultureWorksNormalized(eventsUrl = cultureWorksEventsUrl) {
   const url = `${eventsUrl}${eventsUrl.includes('?') ? '&' : '?'}pp=50`;
   const res = await fetch(url, {
@@ -185,18 +169,10 @@ export async function fetchCultureWorksNormalized(eventsUrl = cultureWorksEvents
   return mapped;
 }
 
-/**
- * Eventbrite — skeleton. Next step: org/venue IDs via env + token (prefer serverless proxy).
- * @returns {Promise<import('../lib/normalizedEvent.js').NormalizedEvent[]>}
- */
 export async function fetchEventbriteNormalized() {
   return [];
 }
 
-/**
- * RSS — skeleton. Next step: parse VITE_RSS_FEED_URLS and map items → NormalizedEvent.
- * @returns {Promise<import('../lib/normalizedEvent.js').NormalizedEvent[]>}
- */
 export async function fetchRssNormalized() {
   return [];
 }

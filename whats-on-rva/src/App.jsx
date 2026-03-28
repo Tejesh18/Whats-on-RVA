@@ -7,22 +7,42 @@ import {
   matchesFilters,
   matchesQuery,
 } from './lib/eventFilters.js';
-import TopBanner from './components/TopBanner.jsx';
-import Hero from './components/Hero.jsx';
-import WhyMatters from './components/WhyMatters.jsx';
+import { useHashRoute } from './hooks/useHashRoute.js';
+import SiteHeader from './components/SiteHeader.jsx';
 import SearchBar from './components/SearchBar.jsx';
 import FilterBar from './components/FilterBar.jsx';
-import SectionHeader from './components/SectionHeader.jsx';
+import BrowseTabs from './components/BrowseTabs.jsx';
 import EventGrid from './components/EventGrid.jsx';
-import SourcesSection from './components/SourcesSection.jsx';
-import IntegrationReadiness from './components/IntegrationReadiness.jsx';
-import PilotFooter from './components/PilotFooter.jsx';
+import EventMap from './components/EventMap.jsx';
 import DemoDataBadge from './components/DemoDataBadge.jsx';
+import ContactSection from './components/ContactSection.jsx';
+import AboutSection from './components/AboutSection.jsx';
+import SiteFooter from './components/SiteFooter.jsx';
+import PrivacyPolicyPage from './pages/PrivacyPolicyPage.jsx';
+import TermsPage from './pages/TermsPage.jsx';
 
-/**
- * Presentation only — all event IO goes through services/eventService.getEvents().
- */
 export default function App() {
+  const hash = useHashRoute();
+
+  useEffect(() => {
+    if (hash === 'contact') {
+      window.requestAnimationFrame(() => {
+        document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+    }
+  }, [hash]);
+
+  if (hash === 'privacy') {
+    return <PrivacyPolicyPage />;
+  }
+  if (hash === 'terms') {
+    return <TermsPage />;
+  }
+
+  return <HomeView />;
+}
+
+function HomeView() {
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [usingFallback, setUsingFallback] = useState(false);
@@ -34,6 +54,8 @@ export default function App() {
     price: '',
   });
   const [tonightOnly, setTonightOnly] = useState(false);
+  const [browseTab, setBrowseTab] = useState('all');
+  const [selectedId, setSelectedId] = useState(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -62,106 +84,98 @@ export default function App() {
       .sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
   }, [events, search, filters, tonightOnly]);
 
-  const featured = useMemo(() => filtered.filter((e) => e.featured), [filtered]);
-  const hiddenGems = useMemo(() => filtered.filter((e) => e.hiddenGem), [filtered]);
+  const listEvents = useMemo(() => {
+    if (browseTab === 'featured') return filtered.filter((e) => e.featured);
+    if (browseTab === 'gems') return filtered.filter((e) => e.hiddenGem);
+    return filtered;
+  }, [filtered, browseTab]);
+
+  const tabCounts = useMemo(
+    () => ({
+      all: filtered.length,
+      featured: filtered.filter((e) => e.featured).length,
+      gems: filtered.filter((e) => e.hiddenGem).length,
+    }),
+    [filtered]
+  );
+
+  useEffect(() => {
+    if (!selectedId) return;
+    if (!listEvents.some((e) => e.id === selectedId)) setSelectedId(null);
+  }, [listEvents, selectedId]);
+
+  useEffect(() => {
+    if (!selectedId) return;
+    const t = window.setTimeout(() => {
+      document.getElementById(`event-card-${selectedId}`)?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+      });
+    }, 200);
+    return () => window.clearTimeout(t);
+  }, [selectedId]);
 
   const handleTonight = () => {
     setTonightOnly((v) => !v);
   };
 
-  const dataSubtitle = usingFallback
-    ? 'Sample listings — live feed unavailable or returned no events in this session.'
-    : 'Live aggregated public listings. Always confirm date, price, and accessibility at the source.';
-
   return (
-    <div className="min-h-screen">
-      <TopBanner />
-      <Hero />
+    <div className="min-h-screen bg-[#f6f4f1]">
+      <SiteHeader />
 
-      <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
-        <WhyMatters />
-
-        {/* Credibility up-front for judges: sourcing + integration story before the grid */}
-        <div className="mt-14 space-y-16">
-          <SourcesSection />
-          <IntegrationReadiness />
-        </div>
-
-        {/* Search + filters */}
-        <section
-          className="mt-14 rounded-2xl border border-rva-slate/10 bg-white p-6 shadow-sm sm:p-8"
-          aria-label="Search and filters"
-        >
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div className="flex-1">
-              <h2 className="font-display text-xl font-bold text-rva-slate">Find an event</h2>
-              <p className="mt-1 text-sm text-rva-slate/65">{dataSubtitle}</p>
-            </div>
-            {usingFallback ? <DemoDataBadge /> : null}
-          </div>
-          <div className="mt-6">
+      <div className="mx-auto max-w-7xl px-4 py-4 sm:px-6 lg:px-8">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0 flex-1">
             <SearchBar value={search} onChange={setSearch} />
           </div>
-          <div className="mt-6">
-            {loading ? (
-              <p className="text-sm text-rva-slate/60">Loading events…</p>
-            ) : (
-              <FilterBar
-                neighborhoods={neighborhoods}
-                categories={categories}
-                filters={filters}
-                onChange={setFilters}
-                tonightActive={tonightOnly}
-                onTonightClick={handleTonight}
+          {usingFallback ? <DemoDataBadge /> : null}
+        </div>
+
+        <div className="mt-4 rounded-2xl border border-rva-slate/10 bg-white p-4 shadow-sm">
+          {loading ? (
+            <p className="text-sm text-rva-slate/55">Loading events…</p>
+          ) : (
+            <FilterBar
+              neighborhoods={neighborhoods}
+              categories={categories}
+              filters={filters}
+              onChange={setFilters}
+              tonightActive={tonightOnly}
+              onTonightClick={handleTonight}
+            />
+          )}
+        </div>
+
+        <div className="mt-5 flex flex-col gap-6 lg:flex-row lg:items-start">
+          <div className="min-w-0 flex-1 lg:max-w-[min(100%,520px)] xl:max-w-[560px]">
+            <BrowseTabs value={browseTab} onChange={setBrowseTab} counts={tabCounts} />
+            <p className="mt-3 text-xs text-rva-slate/50">
+              {listEvents.length} event{listEvents.length === 1 ? '' : 's'}. Tap a listing or map pin to
+              match the map and list.
+            </p>
+            <div className="mt-4">
+              <EventGrid
+                events={listEvents}
+                selectedId={selectedId}
+                onSelectEvent={setSelectedId}
+                emptyMessage="Nothing matches — try clearing filters or search."
               />
-            )}
+            </div>
           </div>
-        </section>
 
-        {/* Featured */}
-        <section className="mt-14" aria-labelledby="featured-heading">
-          <SectionHeader
-            id="featured-heading"
-            title="Featured events"
-            subtitle="Flagged by the upstream calendar when live; curated in sample data when offline."
-            badge="Spotlight"
-          />
-          <EventGrid
-            events={featured}
-            emptyMessage="No featured events match your search or filters. Try clearing filters or search."
-          />
-        </section>
+          <div className="w-full shrink-0 lg:sticky lg:top-[4.5rem] lg:w-[min(100%,440px)] xl:w-[480px]">
+            <EventMap
+              events={listEvents}
+              selectedId={selectedId}
+              onSelectEvent={setSelectedId}
+            />
+          </div>
+        </div>
+      </div>
 
-        {/* Hidden gems */}
-        <section className="mt-16" aria-labelledby="gems-heading">
-          <SectionHeader
-            id="gems-heading"
-            title="Hidden gems"
-            subtitle="Smaller-audience or easy-to-miss listings (heuristic on live data; tagged in sample data)."
-            badge="Local"
-          />
-          <EventGrid
-            events={hiddenGems}
-            emptyMessage="No hidden gems match your search or filters. Adjust filters or try another neighborhood."
-          />
-        </section>
-
-        {/* Full browse */}
-        <section className="mt-16" aria-labelledby="all-heading">
-          <SectionHeader
-            id="all-heading"
-            title="All events"
-            subtitle="Everything in the current dataset, sorted by start time."
-          />
-          <EventGrid
-            events={filtered}
-            emptyMessage="No events match. Reset filters or search to see more listings."
-          />
-        </section>
-
-      </main>
-
-      <PilotFooter />
+      <ContactSection />
+      <AboutSection />
+      <SiteFooter />
     </div>
   );
 }

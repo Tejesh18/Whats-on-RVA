@@ -1,20 +1,28 @@
 import EventCard from './EventCard.jsx';
 
-/** `events` are NormalizedEvent[] from getEvents(); no raw API types here. */
-export default function EventGrid({ events, emptyMessage }) {
+export default function EventGrid({
+  events,
+  emptyMessage,
+  selectedId,
+  onSelectEvent,
+}) {
   if (!events.length) {
     return (
-      <p className="rounded-xl border border-dashed border-rva-slate/20 bg-white/60 px-6 py-12 text-center text-rva-slate/60">
+      <p className="rounded-xl border border-dashed border-rva-slate/20 bg-white/80 px-6 py-10 text-center text-sm text-rva-slate/55">
         {emptyMessage}
       </p>
     );
   }
 
   return (
-    <ul className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+    <ul className="flex flex-col gap-4">
       {events.map((event) => (
         <li key={event.id}>
-          <EventCard event={event} />
+          <EventCard
+            event={event}
+            selected={selectedId === event.id}
+            onActivate={onSelectEvent}
+          />
         </li>
       ))}
     </ul>

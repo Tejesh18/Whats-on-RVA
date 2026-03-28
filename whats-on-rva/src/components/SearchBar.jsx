@@ -25,8 +25,8 @@ export default function SearchBar({ value, onChange, id = 'event-search' }) {
         type="search"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        placeholder="Search title, venue, or keyword…"
-        className="w-full rounded-xl border border-rva-slate/15 bg-white py-3.5 pl-12 pr-4 text-rva-slate shadow-sm outline-none ring-rva-gold/40 transition placeholder:text-rva-slate/40 focus:border-rva-river focus:ring-2"
+        placeholder="Search events, venues, neighborhoods…"
+        className="w-full rounded-xl border border-rva-slate/15 bg-white py-3 pl-12 pr-4 text-base text-rva-slate shadow-sm outline-none ring-rva-gold/40 transition placeholder:text-rva-slate/40 focus:border-rva-river focus:ring-2"
       />
     </div>
   );

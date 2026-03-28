@@ -5,3 +5,16 @@
 body {
   @apply bg-rva-cream text-rva-slate antialiased;
 }
+
+.leaflet-container {
+  font-family: inherit;
+}
+
+.leaflet-popup-content-wrapper {
+  border-radius: 0.75rem;
+}
+
+.leaflet-popup-content {
+  margin: 0.75rem 1rem;
+  min-width: 0;
+}
