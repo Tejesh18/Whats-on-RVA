@@ -245,14 +245,14 @@ export default function EventMap({
   };
 
   return (
-    <div className="rva-event-map flex h-[min(320px,45vh)] w-full flex-col overflow-hidden rounded-2xl border border-zinc-700/60 bg-zinc-950 shadow-2xl shadow-black/40 ring-1 ring-white/5 sm:h-[min(360px,42vh)] lg:h-[min(74vh,680px)] lg:min-h-[420px]">
-      <div className="flex flex-col gap-2 border-b border-zinc-800/80 bg-gradient-to-r from-zinc-950 via-zinc-900 to-zinc-950 px-3 py-2.5">
+    <div className="rva-event-map flex h-[min(320px,45vh)] w-full flex-col overflow-hidden rounded-2xl border border-zinc-200/90 bg-white shadow-xl shadow-zinc-900/10 ring-1 ring-black/5 sm:h-[min(360px,42vh)] lg:h-[min(74vh,680px)] lg:min-h-[420px]">
+      <div className="flex flex-col gap-2 border-b border-zinc-200/90 bg-gradient-to-r from-zinc-50 to-white px-3 py-2.5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-amber-400/90">Events map</span>
-            <p className="text-[10px] text-zinc-400">
+            <span className="text-xs font-bold uppercase tracking-wider text-amber-700/90">Events map</span>
+            <p className="text-[10px] text-zinc-500">
               <span className="inline-flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-blue-500" /> Listings
+                <span className="h-2 w-2 rounded-full bg-amber-500" /> Listings
               </span>
               {storyPoints.length ? (
                 <>
@@ -292,15 +292,15 @@ export default function EventMap({
             <button
               type="button"
               onClick={fitAllEvents}
-              className="order-2 rounded-full border border-zinc-600/80 bg-zinc-800/80 px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-zinc-200 shadow-sm transition hover:border-amber-500/40 hover:bg-zinc-700/90 hover:text-white sm:order-1"
+              className="order-2 rounded-full border border-zinc-200 bg-white px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-zinc-700 shadow-sm transition hover:border-amber-400 hover:bg-amber-50 sm:order-1"
             >
               Fit all
             </button>
-            <span className="order-1 rounded-full bg-gradient-to-r from-sky-600/30 to-blue-600/25 px-2.5 py-1 text-[11px] font-semibold text-sky-100 ring-1 ring-sky-500/25 sm:order-2">
+            <span className="order-1 rounded-full bg-zinc-100 px-2.5 py-1 text-[11px] font-semibold text-zinc-800 ring-1 ring-zinc-200/90 sm:order-2">
               {pts.length} on map
             </span>
             {locateMsg ? (
-              <span className="order-3 max-w-[200px] text-right text-[10px] font-medium text-amber-200/90">
+              <span className="order-3 max-w-[200px] text-right text-[10px] font-medium text-amber-800">
                 {locateMsg}
               </span>
             ) : null}
@@ -319,8 +319,8 @@ export default function EventMap({
                   onClick={() => onMapContentFilterToggle(c.id)}
                   className={`rounded-full px-2.5 py-1 text-[10px] font-bold transition ${
                     on
-                      ? 'bg-sky-500 text-white shadow-md shadow-sky-900/30 ring-1 ring-sky-400/40'
-                      : 'bg-zinc-800/90 text-zinc-300 ring-1 ring-zinc-600/50 hover:bg-zinc-700 hover:ring-zinc-500'
+                      ? 'bg-amber-500 text-zinc-900 shadow-sm ring-1 ring-amber-600/30'
+                      : 'border border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50'
                   }`}
                 >
                   {c.label}
@@ -336,8 +336,8 @@ export default function EventMap({
             onClick={onShowTransitToggle}
             className={`self-start rounded-full px-3 py-1 text-[10px] font-bold transition ${
               showTransit
-                ? 'bg-emerald-600 text-white shadow-md shadow-emerald-950/40 ring-1 ring-emerald-400/35'
-                : 'bg-zinc-800/90 text-zinc-300 ring-1 ring-zinc-600/50 hover:bg-zinc-700'
+                ? 'bg-emerald-600 text-white shadow-sm ring-1 ring-emerald-500/40'
+                : 'border border-zinc-200 bg-white text-zinc-600 hover:bg-zinc-50'
             }`}
           >
             Transit stops {showTransit ? 'visible' : 'hidden'}
@@ -358,18 +358,18 @@ export default function EventMap({
         >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>'
-            url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+            url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
           />
           <ZoomControl position="bottomleft" />
           <ScaleControl position="bottomleft" imperial />
           <Rectangle
             bounds={CITY_RECT}
             pathOptions={{
-              color: '#fbbf24',
-              weight: 2,
-              opacity: 0.75,
-              fillOpacity: 0.06,
-              dashArray: '8 12',
+              color: '#f59e0b',
+              weight: 1.5,
+              opacity: 0.65,
+              fillOpacity: 0.04,
+              dashArray: '6 10',
             }}
           />
           {historicPolygons.map((poly) => (
@@ -377,10 +377,10 @@ export default function EventMap({
               key={poly.id}
               positions={poly.positions}
               pathOptions={{
-                color: poly.color || '#a78bfa',
+                color: poly.color || '#7c3aed',
                 weight: 2,
-                opacity: 0.85,
-                fillOpacity: 0.1,
+                opacity: 0.65,
+                fillOpacity: 0.08,
               }}
             />
           ))}
@@ -389,10 +389,10 @@ export default function EventMap({
               key={`art-${poly.id}`}
               positions={poly.positions}
               pathOptions={{
-                color: poly.color || '#2dd4bf',
-                weight: 2,
-                opacity: 0.8,
-                fillOpacity: 0.08,
+                color: poly.color || '#0d9488',
+                weight: 1.5,
+                opacity: 0.55,
+                fillOpacity: 0.06,
                 dashArray: '4 8',
               }}
             />
@@ -412,8 +412,8 @@ export default function EventMap({
                 <Marker key={t.id} position={[t.lat, t.lng]} icon={pinTransit} riseOnHover>
                   <Popup>
                     <div className="rva-map-popup-inner max-w-[200px]">
-                      <p className="text-sm font-bold text-zinc-50">{t.label}</p>
-                      <p className="mt-0.5 text-[10px] text-zinc-400">Illustrative Pulse / transfer stop</p>
+                      <p className="text-sm font-bold text-zinc-900">{t.label}</p>
+                      <p className="mt-0.5 text-[10px] text-zinc-500">Illustrative Pulse / transfer stop</p>
                     </div>
                   </Popup>
                 </Marker>
@@ -431,8 +431,8 @@ export default function EventMap({
             >
               <Popup>
                 <div className="rva-map-popup-inner max-w-[220px]">
-                  <p className="text-sm font-bold text-zinc-50">{s.title}</p>
-                  <p className="text-[11px] text-zinc-400">Neighborhood story</p>
+                  <p className="text-sm font-bold text-zinc-900">{s.title}</p>
+                  <p className="text-[11px] text-zinc-500">Neighborhood story</p>
                   <button
                     type="button"
                     className="mt-2 w-full rounded-xl bg-gradient-to-r from-orange-500 to-amber-500 py-2 text-xs font-bold text-zinc-950 shadow-md transition hover:brightness-105"
@@ -460,9 +460,9 @@ export default function EventMap({
             >
               <Popup>
                 <div className="rva-map-popup-inner max-w-[260px]">
-                  <p className="text-sm font-bold leading-snug text-zinc-50">{e.title}</p>
-                  <p className="mt-1 text-xs text-zinc-300">{e.venue}</p>
-                  <p className="mt-0.5 text-[10px] font-medium uppercase tracking-wide text-zinc-500">
+                  <p className="text-sm font-bold leading-snug text-zinc-900">{e.title}</p>
+                  <p className="mt-1 text-xs text-zinc-600">{e.venue}</p>
+                  <p className="mt-0.5 text-[10px] font-medium uppercase tracking-wide text-zinc-400">
                     {e.sourceName}
                   </p>
                   <p className="mt-1 text-[10px] text-zinc-500">
@@ -472,14 +472,14 @@ export default function EventMap({
                     const s = getEventTransitSummary(e, travelOrigin);
                     if (!s) return null;
                     return (
-                      <div className="mt-3 rounded-xl border border-zinc-600/60 bg-zinc-800/50 px-3 py-2">
-                        <p className="text-[9px] font-bold uppercase tracking-wide text-emerald-300/95">Getting there</p>
+                      <div className="mt-3 rounded-xl border border-emerald-200/90 bg-emerald-50/80 px-3 py-2">
+                        <p className="text-[9px] font-bold uppercase tracking-wide text-emerald-800">Getting there</p>
                         {s.lines.map((line) => (
-                          <p key={line.key} className="mt-1 text-[10px] leading-snug text-zinc-200">
+                          <p key={line.key} className="mt-1 text-[10px] leading-snug text-emerald-950">
                             {stripBoldMarkers(line.text)}
                           </p>
                         ))}
-                        <p className="mt-1.5 text-[9px] font-bold uppercase tracking-wide text-zinc-400">Live in Maps</p>
+                        <p className="mt-1.5 text-[9px] font-bold uppercase tracking-wide text-zinc-600">Live in Maps</p>
                         <div className="mt-1 flex flex-wrap gap-1">
                           {s.directionsModes.map((m) => (
                             <a
@@ -488,13 +488,13 @@ export default function EventMap({
                               target="_blank"
                               rel="noopener noreferrer"
                               title={m.hint}
-                              className="rounded-md bg-zinc-700/80 px-2 py-0.5 text-[9px] font-bold text-zinc-100 ring-1 ring-zinc-600 hover:bg-zinc-600"
+                              className="rounded-md bg-white px-2 py-0.5 text-[9px] font-bold text-zinc-800 ring-1 ring-zinc-200 hover:bg-zinc-50"
                             >
                               {m.label}
                             </a>
                           ))}
                         </div>
-                        <div className="mt-1 flex flex-wrap gap-x-2 gap-y-0.5 text-[9px] font-bold text-sky-300/95">
+                        <div className="mt-1 flex flex-wrap gap-x-2 gap-y-0.5 text-[9px] font-bold text-sky-700">
                           <a
                             href={appleMapsDirectionsUrl(e.latitude, e.longitude, travelOrigin, 'd')}
                             target="_blank"
@@ -512,7 +512,7 @@ export default function EventMap({
                             Apple · transit
                           </a>
                         </div>
-                        <p className="mt-1 text-[9px] leading-snug text-zinc-500">{s.disclaimer}</p>
+                        <p className="mt-1 text-[9px] leading-snug text-zinc-600">{s.disclaimer}</p>
                       </div>
                     );
                   })()}
@@ -520,7 +520,7 @@ export default function EventMap({
                     href={e.sourceUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="mt-3 inline-flex w-full items-center justify-center rounded-xl bg-gradient-to-r from-zinc-100 to-zinc-200 px-3 py-2 text-xs font-bold text-zinc-900 shadow-sm transition hover:brightness-105"
+                    className="mt-3 inline-flex w-full items-center justify-center rounded-xl bg-zinc-900 px-3 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-zinc-800"
                   >
                     View source →
                   </a>
