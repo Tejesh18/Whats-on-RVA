@@ -1,74 +1,81 @@
 # What's On RVA
 
-A **Richmond, Virginia** web app for discovering **arts and culture events**: search, filters, browse tabs, and an **interactive map**. Listings link out to organizers and venues for tickets and up-to-date details.
+A **Richmond, Virginia** web app for discovering **arts and culture events**: search, filters, an **interactive map**, **neighborhood stories**, and **planning tools**. Listings link out to organizers for tickets and the latest details.
 
 ## Overview
 
-The app merges **CultureWorks** and (optionally) **Eventbrite** listings, scoped to **Richmond city limits**, in a modern discovery UI. If feeds return nothing, **example events** are shown.
+- **Primary feed:** [CultureWorks](https://calendar.richmondcultureworks.org/) calendar JSON (configurable URL).
+- **Optional second feed:** Partner ticket listings via a **server-side proxy** (see [Optional ticket API](#optional-ticket-api-eventbrite)) — browsers cannot call the provider API directly because of CORS.
+- **Geography:** Events are filtered to a **Richmond city bounding box** plus text rules (e.g. obvious out-of-city venues dropped when coordinates or copy allow it).
+- **Fallback:** If live requests fail or return no events, **example Richmond events** from `src/data/mockEvents.js` load and the UI shows a status notice.
 
-## Features
+## Tech stack
 
-- Search, area, category, and price filters; **Tonight** shortcut
-- Tabs: **All** / **Featured** / **Hidden gems**
-- **Map** (CARTO Voyager + OSM data) with pins, popups, Richmond bounds overlay, **Near me**, and list sync
-- Optional **Sign in / Register** (browser-local demo accounts)
-- **Get tickets / details** on every card → official URL
-- Collapsible **Where listings come from** on the site
-- Short status when **example events** are shown instead of the live calendar
+- **React 18** + **Vite 6**
+- **Tailwind CSS**
+- **Leaflet** + **react-leaflet** (map)
+- Optional **local demo auth** (`localStorage` + hashed passwords — not a production backend)
+
+## Features (high level)
+
+- **Home tabs:** **Events** (search, discovery, browse, map) · **Neighborhood stories** (spotlight + story map) · **Plan & personalize** (assistant, trails, “For you”).
+- **Events map:** CARTO **Voyager** basemap, Richmond bounds overlay, optional arts/district polygons, category-colored pins, **hover** tooltips (title + category), **click** for full popup (directions handoff, source link), **Near me** + list selection sync.
+- **Getting there:** Rough on-page hints; **Google Maps** / **Apple Maps** links for live transit, driving (traffic), walking, and biking.
+- **Personalization:** Saved favorites, categories, story views (browser storage); optional remote planning-assistant endpoint.
+- **Legal:** `#privacy`, `#terms`, contact section; update `policiesLastUpdated` in `src/config/siteConfig.js` when you change policies.
 
 ## Project layout
 
 | Path | Role |
 |------|------|
-| `src/App.jsx` | Layout and UI state; calls `getEvents()` for listings |
-| `src/services/eventService.js` | Loads CultureWorks + Eventbrite, dedupes, fallback |
-| `src/services/sourceAdapters.js` | CultureWorks + Eventbrite → normalized events |
-| `src/lib/richmondBounds.js` | City box + text rules (drop Petersburg, etc.) |
-| `src/lib/mergeEvents.js` | Dedupe merged feeds |
-| `src/lib/normalizedEvent.js` | Shared event field definitions (JSDoc) |
-| `src/config/env.js` | `VITE_*` env vars (URLs, timezone, default image) |
-| `src/data/mockEvents.js` | Example events when the live feed fails |
-| `src/lib/eventFilters.js` | Search, filters, “tonight”, sort helpers |
-| `src/components/EventMap.jsx` | Leaflet map and markers |
+| `src/App.jsx` | Shell: tabs, filters, map column, assistant, modals |
+| `src/services/eventService.js` | Loads feeds, merge, dedupe, fallback |
+| `src/services/sourceAdapters.js` | CultureWorks + optional ticket feed → normalized events |
+| `src/lib/richmondBounds.js` | City box + text gates |
+| `src/lib/mergeEvents.js` | Dedupe when merging sources |
+| `src/lib/mapPinCategory.js` | Map pin color bucket from listing text/category |
+| `src/lib/travelHandoff.js` | Google / Apple Maps direction URLs |
+| `src/lib/eventFilters.js` | Search, filters, sort, display helpers |
+| `src/components/EventMap.jsx` | Events map (markers, overlays, controls) |
+| `src/config/siteConfig.js` | Site name, legal copy, policy date |
+| `src/config/env.js` | `VITE_*` usage |
 
-## Data sources
+## Environment variables
 
-- **CultureWorks:** [Richmond CultureWorks calendar API](https://calendar.richmondcultureworks.org/api/2/events) (override with `VITE_CULTUREWORKS_EVENTS_URL`).
-- **Eventbrite (optional):** Search near Richmond is merged in when configured — see **Eventbrite** below.
-- **Geography:** Listings are filtered to a **Richmond city bounding box** plus text checks so places like Petersburg drop out when coordinates or city names are present.
-- **Fallback:** Example events in `mockEvents.js` if live feeds return nothing.
+Copy **`.env.example`** → **`.env.local`** for local overrides. **Never commit** secrets or private API tokens.
 
-## Eventbrite API
-
-Eventbrite blocks browser CORS. **Local dev:** add `EVENTBRITE_PRIVATE_TOKEN` to `.env.local` (no `VITE_` prefix). Vite proxies `/eventbrite-api` to `https://www.eventbriteapi.com/v3` and attaches `Authorization: Bearer …`. **Production:** set `VITE_EVENTBRITE_PROXY` to your own HTTPS endpoint that forwards to Eventbrite with the token server-side (e.g. Cloudflare Worker, Vercel serverless function).
-
-## Accounts (sign in / register)
-
-Optional auth stores **hashed passwords and session in this browser’s local storage only** — fine for demos. For a public product, replace with Supabase, Clerk, or your API and update the Privacy copy.
-
-| Path | Role |
-|------|------|
-| `src/context/AuthContext.jsx` | Session + sign-in / register / sign-out |
-| `src/lib/localAuth.js` | SHA-256 + `localStorage` users |
-| `src/components/AuthModal.jsx` | Modal UI |
-
-## When the live feed fails
-
-If the request errors or returns no events, the app loads example data and shows a small **example events** notice in the UI.
-
-## Configure your product
-
-Defaults work for demos (`contact@example.com`, etc.). For a real launch, set in **`.env.local`** (see `.env.example`):
+### Product / site
 
 | Variable | Purpose |
 |----------|---------|
-| `VITE_CONTACT_EMAIL` | Optional — overrides the sample contact email |
-| `VITE_LEGAL_ENTITY` | Legal name on policies and copyright line |
-| `VITE_PUBLIC_SITE_URL` | Your live URL (policies and meta) |
+| `VITE_PUBLIC_SITE_URL` | Canonical URL (e.g. `https://yourdomain.com`) — sharing, policies |
+| `VITE_CONTACT_EMAIL` | Contact mailto target |
+| `VITE_LEGAL_ENTITY` | Legal name on policies and footer |
 
-Update **`policiesLastUpdated`** in `src/config/siteConfig.js` when you edit Privacy or Terms.
+### Data / display
 
-Optional: have a lawyer review the policy text for your jurisdiction and data practices.
+| Variable | Purpose |
+|----------|---------|
+| `VITE_CULTUREWORKS_EVENTS_URL` | CultureWorks JSON endpoint (default is Richmond) |
+| `VITE_DEFAULT_EVENT_IMAGE_URL` | Fallback image when a listing has no image |
+| `VITE_EVENT_TIMEZONE` | IANA zone for “tonight” / date logic (default `America/New_York`) |
+
+### Optional ticket API (Eventbrite)
+
+The app can merge **Eventbrite search** results when configured. Tokens must **not** use the `VITE_` prefix (they stay off the client).
+
+| Variable | Purpose |
+|----------|---------|
+| `EVENTBRITE_PRIVATE_TOKEN` | **Local dev only:** Vite proxy adds `Authorization: Bearer …` to `/eventbrite-api` → `https://www.eventbriteapi.com/v3` |
+| `VITE_EVENTBRITE_PROXY` | **Production:** HTTPS base URL of **your** proxy that forwards to the Eventbrite API with the token server-side |
+
+### Optional planning assistant
+
+| Variable | Purpose |
+|----------|---------|
+| `VITE_PLANNING_ASSISTANT_URL` | `POST` `{ message, context }` → `{ reply, eventIds? }`. If unset, chat uses on-device rules only. |
+
+Other optional keys (`VITE_RSS_FEED_URLS`, etc.) are documented in `.env.example`.
 
 ## Run locally
 
@@ -84,36 +91,53 @@ npm run dev
 Open the URL Vite prints (usually `http://localhost:5173`).
 
 ```bash
-npm run build
-npm run preview
+npm run build    # output: dist/
+npm run preview  # local production preview
 ```
 
-## Deploy (Vercel)
+## Deploy
 
-1. Connect the repo in [Vercel](https://vercel.com).
-2. Framework: **Vite**. Build: `npm run build`. Output: `dist`.
-3. Set any `VITE_*` variables from `.env.example` if you change endpoints.
+### Any static host (S3, Cloudflare Pages, GitHub Pages, etc.)
 
-## Git
+1. Build: `npm ci && npm run build`.
+2. Publish the **`dist`** folder.
+3. Set **`VITE_*`** environment variables in the host’s dashboard to match production (especially `VITE_PUBLIC_SITE_URL` and any feed URLs).
+4. This app uses **hash routes** for some pages (`#privacy`, `#terms`) — no special SPA rewrite is required for those. If you add history-based routes later, configure **fallback to `index.html`**.
 
-```bash
-cd whats-on-rva
-git init
-git add .
-git commit -m "feat: What's On RVA"
-git branch -M main
-git remote add origin <YOUR_REPO_URL>
-git push -u origin main
-```
+### Vercel
+
+1. New project → import the repo; set **Root Directory** to `whats-on-rva` if the repo is monorepo-style.
+2. Framework preset: **Vite**. Build: `npm run build`. Output: **`dist`**.
+3. Add environment variables (see above). Do **not** put `EVENTBRITE_PRIVATE_TOKEN` in client-exposed vars; use `VITE_EVENTBRITE_PROXY` pointing to your worker.
+
+### Netlify
+
+- Build command: `npm run build`
+- Publish directory: `dist`
+- Same env var rules as Vercel.
+
+### Pre-launch checklist
+
+- [ ] Set `VITE_PUBLIC_SITE_URL`, `VITE_CONTACT_EMAIL`, `VITE_LEGAL_ENTITY`
+- [ ] Confirm CultureWorks URL and timezone
+- [ ] If using ticket merge in production: deploy HTTPS proxy + `VITE_EVENTBRITE_PROXY`
+- [ ] Update **`policiesLastUpdated`** in `siteConfig.js` if you edited Privacy/Terms
+- [ ] Run `npm run build` locally and fix any errors
+- [ ] Spot-check map, legal links, and external listing URLs on the production domain
+
+## Accounts (demo)
+
+Sign-in / register uses **browser `localStorage` only** — suitable for demos. For production accounts, replace with Supabase, Clerk, or your API and update Privacy/Terms accordingly.
 
 ## Accuracy
 
-Times, prices, and accessibility may change on the organizer’s site. Always confirm on their page before you go.
+Times, prices, and accessibility change on organizers’ sites. Users should always confirm on the official listing before going out.
 
-## Product pages included
+## Maintenance scripts (optional)
 
-- **`#privacy`** — Privacy policy (template; customize + legal review as needed)
-- **`#terms`** — Terms of use
-- **`#contact`** — Contact section with mailto
+Under `scripts/` there are helpers to import **GRTC GTFS** into JSON (PowerShell / Node / Python). They are **not** required to run the app; the live UI uses heuristic transit hints plus Maps links unless you wire generated stop data in yourself.
 
-Navigation: header and footer on the home page; legal pages include a minimal footer. Favicon: `public/favicon.svg`.
+## License / third-party
+
+- Map tiles: **OpenStreetMap** contributors + **CARTO** (see on-map attribution).
+- Event data: subject to CultureWorks and any optional feed terms you enable.

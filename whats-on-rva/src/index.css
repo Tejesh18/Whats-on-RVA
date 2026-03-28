@@ -152,9 +152,7 @@ body {
 
 .leaflet-marker-icon:hover .rva-map-pin-inner:not(.rva-map-pin-inner--selected) {
   transform: scale(1.15);
-  box-shadow:
-    0 4px 14px rgba(217, 119, 6, 0.55),
-    0 0 0 1px rgba(0, 0, 0, 0.15);
+  filter: brightness(1.08);
 }
 
 .rva-map-pin-inner--event {
@@ -178,13 +176,103 @@ body {
     0 2px 10px rgba(0, 0, 0, 0.35);
 }
 
+/* Pin colors = same buckets as “Filter pins” (music / visual / theatre / family / free) + other */
+.rva-map-pin-inner--map-music {
+  background: linear-gradient(145deg, #c4b5fd, #7c3aed);
+  box-shadow:
+    0 2px 10px rgba(124, 58, 237, 0.45),
+    0 0 0 1px rgba(0, 0, 0, 0.18);
+}
+
+.rva-map-pin-inner--map-visual {
+  background: linear-gradient(145deg, #f472b6, #db2777);
+  box-shadow:
+    0 2px 10px rgba(219, 39, 119, 0.45),
+    0 0 0 1px rgba(0, 0, 0, 0.18);
+}
+
+.rva-map-pin-inner--map-theatre {
+  background: linear-gradient(145deg, #f87171, #b91c1c);
+  box-shadow:
+    0 2px 10px rgba(185, 28, 28, 0.45),
+    0 0 0 1px rgba(0, 0, 0, 0.18);
+}
+
+.rva-map-pin-inner--map-family {
+  background: linear-gradient(145deg, #38bdf8, #0284c7);
+  box-shadow:
+    0 2px 10px rgba(2, 132, 199, 0.45),
+    0 0 0 1px rgba(0, 0, 0, 0.18);
+}
+
+.rva-map-pin-inner--map-free {
+  background: linear-gradient(145deg, #4ade80, #16a34a);
+  box-shadow:
+    0 2px 10px rgba(22, 163, 74, 0.45),
+    0 0 0 1px rgba(0, 0, 0, 0.18);
+}
+
+.rva-map-pin-inner--map-other {
+  background: linear-gradient(145deg, #fbbf24, #b45309);
+  box-shadow:
+    0 2px 10px rgba(180, 83, 9, 0.45),
+    0 0 0 1px rgba(0, 0, 0, 0.18);
+}
+
 .rva-map-pin-inner--selected {
   width: 22px;
   height: 22px;
   margin: -3px 0 0 -3px;
   border-width: 3px;
-  background: linear-gradient(135deg, #fbbf24, #f59e0b, #ea580c);
+  border-color: #fffbeb;
   animation: rva-pin-pulse 1.8s ease-in-out infinite;
+}
+
+.rva-map-legend-dot {
+  display: inline-block;
+  height: 8px;
+  width: 8px;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.9);
+}
+
+.rva-map-legend-dot--music {
+  background: linear-gradient(145deg, #c4b5fd, #7c3aed);
+}
+.rva-map-legend-dot--visual {
+  background: linear-gradient(145deg, #f472b6, #db2777);
+}
+.rva-map-legend-dot--theatre {
+  background: linear-gradient(145deg, #f87171, #b91c1c);
+}
+.rva-map-legend-dot--family {
+  background: linear-gradient(145deg, #38bdf8, #0284c7);
+}
+.rva-map-legend-dot--free {
+  background: linear-gradient(145deg, #4ade80, #16a34a);
+}
+.rva-map-legend-dot--other {
+  background: linear-gradient(145deg, #fbbf24, #b45309);
+}
+
+.rva-event-map .leaflet-tooltip.rva-map-hover-tip {
+  margin: 0 !important;
+  padding: 8px 10px !important;
+  max-width: min(240px, 72vw);
+  border: 1px solid #e4e4e7 !important;
+  border-radius: 10px !important;
+  background: #ffffff !important;
+  color: #18181b !important;
+  font-family: inherit !important;
+  font-size: 11px !important;
+  line-height: 1.35 !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12) !important;
+}
+
+.rva-event-map .leaflet-tooltip.rva-map-hover-tip::before {
+  border-top-color: #e4e4e7 !important;
 }
 
 /* Long feeds: skip layout work for off-screen cards (Chrome/Edge/Firefox). */

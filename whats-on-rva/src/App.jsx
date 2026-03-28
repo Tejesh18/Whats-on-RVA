@@ -358,7 +358,6 @@ function HomeView({ hash }) {
     <div className="min-h-screen bg-zinc-950">
       <SiteHeader />
       <HeroSection />
-      <WhyUsSection />
 
       <main
         id="browse-events"
@@ -558,6 +557,7 @@ function HomeView({ hash }) {
         <ReadyToIntegrateSection />
         <ContactSection />
         <AboutSection />
+        <WhyUsSection />
         <SiteFooter />
       </main>
 

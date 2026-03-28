@@ -4,6 +4,7 @@ import {
   TileLayer,
   Marker,
   Popup,
+  Tooltip,
   useMap,
   Rectangle,
   Polygon,
@@ -15,6 +16,7 @@ import { RICHMOND_VA_BOUNDS, isWithinRichmondVaBounds } from '../lib/richmondBou
 import { RICHMOND_TRANSIT_PINS } from '../data/transitPins.js';
 import { getEventTransitSummary } from '../lib/transitEstimates.js';
 import { appleMapsDirectionsUrl } from '../lib/travelHandoff.js';
+import { deriveMapPinCategory, MAP_PIN_LEGEND } from '../lib/mapPinCategory.js';
 
 function stripBoldMarkers(text) {
   return text.replace(/\*\*([^*]+)\*\*/g, '$1');
@@ -27,21 +29,25 @@ const CITY_RECT = [
   [RICHMOND_VA_BOUNDS.north, RICHMOND_VA_BOUNDS.east],
 ];
 
-const pinEvent = L.divIcon({
-  className: 'rva-leaflet-divicon',
-  html: '<div class="rva-map-pin-inner rva-map-pin-inner--event"></div>',
-  iconSize: [28, 28],
-  iconAnchor: [14, 26],
-  popupAnchor: [0, -24],
-});
-
-const pinEventSelected = L.divIcon({
-  className: 'rva-leaflet-divicon',
-  html: '<div class="rva-map-pin-inner rva-map-pin-inner--event rva-map-pin-inner--selected"></div>',
-  iconSize: [36, 36],
-  iconAnchor: [18, 33],
-  popupAnchor: [0, -30],
-});
+/** One Leaflet icon per category × selected — reused across markers. */
+const eventPinIconCache = new Map();
+function eventDivIcon(event, selected) {
+  const cat = deriveMapPinCategory(event);
+  const key = `${cat}-${selected ? 1 : 0}`;
+  let icon = eventPinIconCache.get(key);
+  if (!icon) {
+    const cls = `rva-map-pin-inner rva-map-pin-inner--map-${cat}${selected ? ' rva-map-pin-inner--selected' : ''}`;
+    icon = L.divIcon({
+      className: 'rva-leaflet-divicon',
+      html: `<div class="${cls}"></div>`,
+      iconSize: selected ? [36, 36] : [28, 28],
+      iconAnchor: selected ? [18, 33] : [14, 26],
+      popupAnchor: selected ? [0, -30] : [0, -24],
+    });
+    eventPinIconCache.set(key, icon);
+  }
+  return icon;
+}
 
 const pinUserLocation = L.divIcon({
   className: 'rva-leaflet-divicon',
@@ -329,6 +335,17 @@ export default function EventMap({
             })}
           </div>
         ) : null}
+        <div className="flex flex-wrap items-center gap-x-3 gap-y-1 border-t border-zinc-100 pt-2">
+          <span className="text-[9px] font-bold uppercase tracking-wider text-zinc-500">Pin colors</span>
+          <ul className="flex flex-wrap items-center gap-x-3 gap-y-1">
+            {MAP_PIN_LEGEND.map((row) => (
+              <li key={row.key} className="flex items-center gap-1 text-[9px] text-zinc-600">
+                <span className={`rva-map-legend-dot rva-map-legend-dot--${row.key}`} aria-hidden />
+                {row.label}
+              </li>
+            ))}
+          </ul>
+        </div>
         {onShowTransitToggle ? (
           <button
             type="button"
@@ -344,7 +361,8 @@ export default function EventMap({
           </button>
         ) : null}
         <p className="text-[9px] leading-snug text-zinc-500">
-          Tip: click a pin or pick an event in the list — the map flies there and opens the card. Scroll to zoom; drag to pan.
+          Hover a pin for a quick title; click the pin (or choose in the list) for full details. Green <strong>Arts</strong> shapes
+          are district overlays — pin colors follow music, art, theatre, family, and free listings.
         </p>
       </div>
       <div className="relative min-h-0 flex-1">
@@ -452,12 +470,24 @@ export default function EventMap({
                 else markerRefs.current.delete(e.id);
               }}
               position={[e.latitude, e.longitude]}
-              icon={e.id === selectedId ? pinEventSelected : pinEvent}
+              icon={eventDivIcon(e, e.id === selectedId)}
               riseOnHover
               eventHandlers={{
                 click: () => onSelectEvent?.(e.id),
               }}
             >
+              <Tooltip
+                direction="top"
+                offset={[0, -8]}
+                opacity={1}
+                interactive={false}
+                className="rva-map-hover-tip"
+              >
+                <div className="m-0 p-0 text-left">
+                  <p className="line-clamp-2 font-bold leading-tight text-zinc-900">{e.title}</p>
+                  <p className="mt-0.5 text-[10px] font-semibold text-zinc-500">{e.category || 'Event'}</p>
+                </div>
+              </Tooltip>
               <Popup>
                 <div className="rva-map-popup-inner max-w-[260px]">
                   <p className="text-sm font-bold leading-snug text-zinc-900">{e.title}</p>
