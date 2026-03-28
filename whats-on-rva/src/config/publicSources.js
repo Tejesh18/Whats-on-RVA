@@ -7,9 +7,9 @@ export const publicEventSources = [
     notes: 'Richmond-area arts and culture listings.',
   },
   {
-    name: 'Eventbrite',
+    name: 'Partner ticket platforms',
     url: 'https://www.eventbrite.com/',
-    notes: 'Ticketing and events (optional future source).',
+    notes: 'Optional ticket-listing APIs (configure proxy + token in dev).',
   },
   {
     name: 'RSS feeds',

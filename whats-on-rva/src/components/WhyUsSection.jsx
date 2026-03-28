@@ -19,7 +19,7 @@ const edges = [
   },
   {
     title: 'Your sources, one calm surface',
-    body: 'Pulls from public Richmond calendars (e.g. CultureWorks) and can layer Eventbrite when you configure it — so listings live in one map-and-feed experience.',
+    body: 'Pulls from public Richmond calendars (e.g. CultureWorks) and can layer optional ticket-listing feeds when you configure them — one map-and-feed surface.',
   },
 ];
 
@@ -35,11 +35,11 @@ export default function WhyUsSection() {
         <div className="mx-auto max-w-3xl text-center">
           <p className="text-xs font-bold uppercase tracking-[0.2em] text-amber-400/90">Why us</p>
           <h2 id="why-us-heading" className="mt-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
-            Why {siteConfig.siteName} — not only Eventbrite?
+            Why {siteConfig.siteName}?
           </h2>
           <p className="mt-4 text-base leading-relaxed text-zinc-400 sm:text-lg">
-            <strong className="font-semibold text-zinc-200">Eventbrite excels at checkout</strong> when you already know the
-            event. We’re optimized for something different:{' '}
+            <strong className="font-semibold text-zinc-200">Big ticketing apps excel at checkout</strong> when you already know
+            the show. We’re optimized for something different:{' '}
             <strong className="font-semibold text-zinc-200">exploring Richmond with context</strong> — neighborhoods, culture,
             and plans that match how people actually go out here.
           </p>
@@ -62,7 +62,7 @@ export default function WhyUsSection() {
           <p className="mt-2 text-sm leading-relaxed text-zinc-500">
             You’ll still open organizers’ pages for tickets, refunds, and last-minute changes — we’re the{' '}
             <strong className="text-zinc-300">discovery and cultural layer</strong> on top, not a replacement box office.
-            Together with tools like Eventbrite, the goal is simple:{' '}
+            Alongside whatever app you use to buy tickets, the goal is simple:{' '}
             <strong className="text-zinc-300">make Richmond easier to love night by night.</strong>
           </p>
         </div>

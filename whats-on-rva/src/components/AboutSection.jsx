@@ -24,7 +24,7 @@ export default function AboutSection() {
               calendar JSON when the feed is available.
             </li>
             <li>
-              <strong className="text-rva-slate">Eventbrite</strong> — optional search near Richmond
+              <strong className="text-rva-slate">Partner ticket feeds</strong> — optional search near Richmond
               when you configure an API token (dev proxy) or your own production proxy URL.
             </li>
             <li>

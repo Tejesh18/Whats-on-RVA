@@ -6,8 +6,8 @@ export default function SourcesTrustSection() {
       status: 'Live',
     },
     {
-      title: 'Eventbrite',
-      body: 'Optional search near Richmond: dev proxy with a private token, or your own HTTPS proxy in production.',
+      title: 'Partner ticket search',
+      body: 'Optional listings near Richmond: dev proxy with a private API token, or your own HTTPS proxy in production.',
       status: 'Optional',
     },
     {

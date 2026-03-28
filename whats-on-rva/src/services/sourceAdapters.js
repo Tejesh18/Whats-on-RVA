@@ -243,9 +243,9 @@ function normalizeEventbriteEvent(raw) {
   const descHtml = raw.description?.text || '';
   const desc = ebStrip(descHtml);
   const description =
-    desc.length > 280 ? `${desc.slice(0, 277).trim()}…` : desc || 'See Eventbrite for details.';
+    desc.length > 280 ? `${desc.slice(0, 277).trim()}…` : desc || 'See the listing for details.';
 
-  const venueName = v?.name?.trim() || 'Venue on Eventbrite';
+  const venueName = v?.name?.trim() || 'Venue (see listing)';
   const neighborhood = /^richmond/i.test(String(city).trim()) ? 'Richmond' : 'Richmond area';
 
   const isFree = raw.is_free === true;
@@ -253,14 +253,14 @@ function normalizeEventbriteEvent(raw) {
 
   return {
     id: `eb-${raw.id}`,
-    title: raw.name?.text?.trim() || 'Eventbrite event',
-    category: 'Eventbrite',
+    title: raw.name?.text?.trim() || 'Ticketed event',
+    category: 'Live events',
     neighborhood,
     venue: venueName,
     startTime,
     endTime,
     isFree,
-    price: isFree ? null : 'See Eventbrite',
+    price: isFree ? null : 'See listing',
     description,
     sourceName: 'Eventbrite',
     sourceUrl: raw.url || 'https://www.eventbrite.com',

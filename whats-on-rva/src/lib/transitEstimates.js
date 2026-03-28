@@ -1,5 +1,6 @@
 import { haversineKm } from './geo.js';
 import { RICHMOND_TRANSIT_PINS } from '../data/transitPins.js';
+import { getGoogleDirectionsModes } from './travelHandoff.js';
 
 const WALK_KMH = 5;
 const WALK_DETOUR = 1.35;
@@ -87,7 +88,7 @@ export function estimateTripFromOriginToEvent(originLat, originLng, eventLat, ev
 }
 
 const DISCLAIMER =
-  'Illustrative math only — not live GRTC schedules. Check the official app or maps before you leave.';
+  'Hints above are rough (straight-line + Pulse model). For real-time driving traffic, live transit times, and exact routes, use the links below — Google Maps and Apple Maps pull current conditions when you open them.';
 
 /**
  * Build lines for UI + optional Google Maps transit URL.
@@ -131,16 +132,12 @@ export function getEventTransitSummary(event, travelOrigin) {
     }
   }
 
-  const dest = `${elat},${elng}`;
-  let mapsTransitUrl = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(dest)}&travelmode=transit`;
-  if (
-    travelOrigin &&
-    typeof travelOrigin.lat === 'number' &&
-    typeof travelOrigin.lng === 'number'
-  ) {
-    const o = `${travelOrigin.lat},${travelOrigin.lng}`;
-    mapsTransitUrl = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(o)}&destination=${encodeURIComponent(dest)}&travelmode=transit`;
-  }
+  const directionsModes = getGoogleDirectionsModes(elat, elng, travelOrigin);
 
-  return { lines, trip, disclaimer: DISCLAIMER, mapsTransitUrl };
+  return {
+    lines,
+    trip,
+    disclaimer: DISCLAIMER,
+    directionsModes,
+  };
 }

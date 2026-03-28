@@ -5,7 +5,7 @@ import { shareText } from '../lib/shareRichmond.js';
 import EventTransitStrip from './EventTransitStrip.jsx';
 
 /**
- * Full feed card — flatter, snappy interactions (Eventbrite-style); memoized for long lists.
+ * Full feed card — flatter, snappy interactions; memoized for long lists.
  */
 function EventCard({
   event,

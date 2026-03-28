@@ -18,7 +18,7 @@ export default function ApiStatusBanner({ loadError, usingFallback, onRetry, loa
           {usingFallback ? (
             <p className="mt-1 text-xs text-amber-900/75">
               Showing curated <strong>example Richmond events</strong> so you can still explore filters,
-              map, and stories. Retry to pull CultureWorks / Eventbrite again.
+              map, and stories. Retry to pull live feeds again.
             </p>
           ) : null}
         </div>

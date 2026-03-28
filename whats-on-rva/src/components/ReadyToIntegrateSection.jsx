@@ -4,7 +4,7 @@
 const cards = [
   {
     title: 'Uses existing public event sources',
-    body: 'CultureWorks Localist-style JSON and optional Eventbrite search power the grid — no proprietary scraping of ticket pages. RSS hooks are stubbed for partner feeds.',
+    body: 'CultureWorks Localist-style JSON and optional partner ticket search power the grid — no proprietary scraping of ticket pages. RSS hooks are stubbed for partner feeds.',
   },
   {
     title: 'Museums & oral history ready',

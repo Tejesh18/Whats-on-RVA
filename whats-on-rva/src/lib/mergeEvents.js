@@ -1,6 +1,6 @@
 /**
- * Drop near-duplicates when merging CultureWorks + Eventbrite (same title + same hour).
- * First occurrence wins — list CultureWorks before Eventbrite when merging.
+ * Drop near-duplicates when merging CultureWorks + partner ticket feed (same title + same hour).
+ * First occurrence wins — CultureWorks is merged before the ticket partner when combining.
  * @param {Array<Record<string, unknown>>} events
  */
 export function dedupeMergedEvents(events) {

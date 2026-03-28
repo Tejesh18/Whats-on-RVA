@@ -1,5 +1,5 @@
 /**
- * Hero-style search field (Eventbrite-style: large, clear focus ring).
+ * Hero-style search field (large, clear focus ring).
  */
 export default function SearchBar({ value, onChange, id = 'event-search', pending = false }) {
   return (

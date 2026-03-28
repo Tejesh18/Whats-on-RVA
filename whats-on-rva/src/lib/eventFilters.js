@@ -188,7 +188,8 @@ export function isSmallVenueSupporting(event) {
 
 export function displaySourceLabel(sourceName) {
   if (!sourceName) return 'Listing';
-  if (sourceName === 'CultureWorks' || sourceName === 'Eventbrite') return sourceName;
+  if (sourceName === 'CultureWorks') return sourceName;
+  if (sourceName === 'Eventbrite') return 'Partner tickets';
   if (/community|grassroots|neighbor|volunteer|pta|collective/i.test(sourceName)) return 'Community Feed';
   return sourceName;
 }

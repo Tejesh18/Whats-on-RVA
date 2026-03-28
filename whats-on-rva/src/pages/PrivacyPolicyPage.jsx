@@ -42,8 +42,8 @@ export default function PrivacyPolicyPage() {
 
       <LegalSection title="Event listings">
         <p>
-          Listings and images come from public sources (CultureWorks and, when configured, Eventbrite
-          search). We filter to <strong>Richmond city limits</strong> on our side when possible, but
+          Listings and images come from public sources (CultureWorks and, when configured, optional
+          partner ticket listings). We filter to <strong>Richmond city limits</strong> on our side when possible, but
           always verify the venue address on the organizer&apos;s page.
         </p>
         <p>
