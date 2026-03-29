@@ -1,4 +1,5 @@
 import { rvaVoice } from '../config/rvaVoice.js';
+import DateRangeCalendar from './DateRangeCalendar.jsx';
 
 /**
  * Search-adjacent discovery: area, type, price, date, accessibility chips, quick actions.
@@ -15,8 +16,8 @@ export default function DiscoveryPanel({
   categories,
   filters,
   onFiltersChange,
-  datePreset,
-  onDatePresetChange,
+  dateRange,
+  onDateRangeChange,
   accessibilityKeys,
   onAccessibilityToggle,
   tonightActive,
@@ -108,7 +109,7 @@ export default function DiscoveryPanel({
       ) : null}
 
       <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-        <div className="grid flex-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid flex-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
           <div>
             <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-zinc-500">
               Neighborhood
@@ -166,26 +167,14 @@ export default function DiscoveryPanel({
               <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400">▾</span>
             </div>
           </div>
-          <div>
-            <label className="mb-1.5 block text-[10px] font-bold uppercase tracking-widest text-zinc-500">
-              Date
-            </label>
-            <div className="relative">
-              <select
-                value={datePreset}
-                onChange={(e) => onDatePresetChange(e.target.value)}
-                className={selectClass}
-              >
-                <option value="any">Any date</option>
-                <option value="today">Today</option>
-                <option value="weekend">This weekend</option>
-                <option value="next7">Next 7 days</option>
-              </select>
-              <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-zinc-400">▾</span>
-            </div>
-          </div>
         </div>
       </div>
+
+      <DateRangeCalendar
+        fromYmd={dateRange?.fromYmd ?? ''}
+        toYmd={dateRange?.toYmd ?? ''}
+        onRangeChange={onDateRangeChange}
+      />
 
       <div>
         <p className="mb-2 text-[10px] font-bold uppercase tracking-widest text-zinc-500">Accessibility</p>

@@ -3,7 +3,7 @@
  * Eventbrite search when a dev proxy or production proxy URL is configured.
  */
 
-import { mockEvents } from '../data/mockEvents.js';
+import { mockEvents, todayYmdRichmond } from '../data/mockEvents.js';
 import { cultureWorksEventsUrl, defaultEventImageUrl } from '../config/env.js';
 import {
   isWithinRichmondVaBounds,
@@ -56,12 +56,35 @@ function detailViewsBelow(e, max) {
   return typeof v !== 'number' || v <= max;
 }
 
-export function normalizeCultureWorksNode(node, fallbackListingUrl) {
-  const e = node.event ?? node;
-  const inst = e.event_instances?.[0]?.event_instance;
-  const ranking = typeof inst?.ranking === 'number' ? inst.ranking : 1;
-  const startRaw = inst?.start || (e.first_date ? `${e.first_date}T12:00:00` : null);
+/** Calendar math in Richmond wall date (matches mock feed helpers). */
+function addDaysToRichmondYmd(ymd, deltaDays) {
+  const [y, m, d] = ymd.split('-').map(Number);
+  const utc = Date.UTC(y, m - 1, d + deltaDays, 12, 0, 0);
+  return todayYmdRichmond(new Date(utc));
+}
+
+/**
+ * Localist / CultureWorks can return many `event_instances` (recurrences). We emit one listing per instance
+ * so future dates are visible — previously only `event_instances[0]` was used (often “today” only).
+ */
+function listCultureWorksInstances(e) {
+  const raw = e.event_instances;
+  if (Array.isArray(raw) && raw.length > 0) {
+    return raw
+      .map((w) => w?.event_instance ?? w)
+      .filter((inst) => inst && (inst.start || inst.start_datetime));
+  }
+  if (e.first_date) {
+    return [{ start: `${e.first_date}T12:00:00`, end: null, all_day: false }];
+  }
+  return [];
+}
+
+function cultureWorksEventFromInstance(e, inst, instanceSuffix, fallbackListingUrl) {
+  const startRaw = inst?.start || inst?.start_datetime;
   if (!startRaw) return null;
+
+  const ranking = typeof inst?.ranking === 'number' ? inst.ranking : 1;
 
   const startTime = new Date(startRaw).toISOString();
   let endTime;
@@ -158,7 +181,7 @@ export function normalizeCultureWorksNode(node, fallbackListingUrl) {
   if (mentionsOutOfCityArea(textBlob)) return null;
 
   return {
-    id: `cw-${e.id}`,
+    id: `cw-${e.id}-${instanceSuffix}`,
     title: e.title || 'Untitled event',
     category,
     neighborhood,
@@ -180,21 +203,84 @@ export function normalizeCultureWorksNode(node, fallbackListingUrl) {
   };
 }
 
+/** @returns {import('../lib/normalizedEvent.js').NormalizedEvent[]} */
+export function normalizeCultureWorksNodeToList(node, fallbackListingUrl) {
+  const e = node.event ?? node;
+  if (e.id == null) return [];
+
+  const instances = listCultureWorksInstances(e);
+  const out = [];
+  for (let i = 0; i < instances.length; i++) {
+    const inst = instances[i];
+    const rawKey = String(inst.start || inst.start_datetime || '').replace(/[^0-9A-Za-z]/g, '');
+    const suffix =
+      inst?.id != null ? `i${inst.id}` : rawKey.length > 0 ? `t${rawKey}` : `n${i}`;
+    const one = cultureWorksEventFromInstance(e, inst, suffix, fallbackListingUrl);
+    if (one) out.push(one);
+  }
+  return out;
+}
+
+/** @deprecated Prefer normalizeCultureWorksNodeToList — kept for tests / callers expecting one row. */
+export function normalizeCultureWorksNode(node, fallbackListingUrl) {
+  const list = normalizeCultureWorksNodeToList(node, fallbackListingUrl);
+  return list[0] ?? null;
+}
+
+function buildCultureWorksRequestUrl(baseUrl, { start, end, pp, page, useDateRange }) {
+  const url = new URL(baseUrl);
+  url.searchParams.set('pp', String(pp));
+  url.searchParams.set('page', String(page));
+  if (useDateRange) {
+    url.searchParams.set('start', start);
+    url.searchParams.set('end', end);
+  }
+  return url.toString();
+}
+
+async function fetchCultureWorksPages(eventsUrl, useDateRange, startYmd, endYmd, pp, maxPages) {
+  const acc = [];
+  for (let page = 1; page <= maxPages; page++) {
+    const url = buildCultureWorksRequestUrl(eventsUrl, {
+      start: startYmd,
+      end: endYmd,
+      pp,
+      page,
+      useDateRange,
+    });
+    const res = await fetch(url, {
+      headers: { Accept: 'application/json' },
+    });
+    if (!res.ok) {
+      return { ok: false, status: res.status, acc };
+    }
+    const data = await res.json();
+    const rawList = data.events ?? data;
+    if (!Array.isArray(rawList) || rawList.length === 0) break;
+    for (const n of rawList) {
+      acc.push(...normalizeCultureWorksNodeToList(n, eventsUrl));
+    }
+    if (rawList.length < pp) break;
+  }
+  return { ok: true, status: 200, acc };
+}
+
 export async function fetchCultureWorksNormalized(eventsUrl = cultureWorksEventsUrl) {
-  const url = `${eventsUrl}${eventsUrl.includes('?') ? '&' : '?'}pp=50`;
-  const res = await fetch(url, {
-    headers: { Accept: 'application/json' },
-  });
-  if (!res.ok) throw new Error(`CultureWorks HTTP ${res.status}`);
+  const startYmd = todayYmdRichmond();
+  const endYmd = addDaysToRichmondYmd(startYmd, 120);
+  const pp = 100;
+  const maxPages = 25;
 
-  const data = await res.json();
-  const rawList = data.events ?? data;
-  if (!Array.isArray(rawList)) return [];
+  let r = await fetchCultureWorksPages(eventsUrl, true, startYmd, endYmd, pp, maxPages);
+  if (!r.ok && r.acc.length === 0) {
+    r = await fetchCultureWorksPages(eventsUrl, false, startYmd, endYmd, pp, maxPages);
+  }
+  if (!r.ok && r.acc.length === 0) {
+    throw new Error(`CultureWorks HTTP ${r.status}`);
+  }
 
-  const mapped = rawList
-    .map((n) => normalizeCultureWorksNode(n, eventsUrl))
-    .filter(Boolean);
-
+  const graceMs = Date.now() - 2 * 3600000;
+  const mapped = r.acc.filter((ev) => new Date(ev.endTime).getTime() >= graceMs);
   mapped.sort((a, b) => new Date(a.startTime) - new Date(b.startTime));
   return mapped;
 }

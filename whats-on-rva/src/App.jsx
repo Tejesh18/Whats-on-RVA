@@ -6,7 +6,7 @@ import {
   isTonightRichmond,
   matchesFilters,
   matchesQuery,
-  matchesDatePreset,
+  matchesDateRangeFilter,
   matchesAccessibilityKeys,
   isThisWeekendRichmond,
   isSmallVenueSupporting,
@@ -101,7 +101,7 @@ function HomeView({ hash }) {
     category: '',
     price: '',
   });
-  const [datePreset, setDatePreset] = useState('any');
+  const [dateRange, setDateRange] = useState(() => ({ fromYmd: '', toYmd: '' }));
   const [accessibilityKeys, setAccessibilityKeys] = useState(() => new Set());
 
   const [tonightActive, setTonightActive] = useState(false);
@@ -186,7 +186,7 @@ function HomeView({ hash }) {
     let list = events
       .filter((e) => matchesQuery(e, deferredSearch))
       .filter((e) => matchesFilters(e, filters))
-      .filter((e) => matchesDatePreset(e, datePreset))
+      .filter((e) => matchesDateRangeFilter(e, dateRange))
       .filter((e) => matchesAccessibilityKeys(e, accessibilityKeys));
 
     if (tonightActive) list = list.filter((e) => isTonightRichmond(e));
@@ -398,8 +398,8 @@ function HomeView({ hash }) {
                   categories={categories}
                   filters={filters}
                   onFiltersChange={setFilters}
-                  datePreset={datePreset}
-                  onDatePresetChange={setDatePreset}
+                  dateRange={dateRange}
+                  onDateRangeChange={setDateRange}
                   accessibilityKeys={accessibilityKeys}
                   onAccessibilityToggle={toggleAccessibility}
                   tonightActive={tonightActive}

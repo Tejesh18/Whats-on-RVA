@@ -108,7 +108,40 @@ export function matchesFilters(event, filters) {
   return true;
 }
 
-/** @param {'any'|'today'|'weekend'|'next7'} preset */
+/** YYYY-MM-DD for an event start in the configured metro timezone. */
+export function eventStartYmdRichmond(iso) {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: RICHMOND_TZ,
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).formatToParts(new Date(iso));
+  const y = parts.find((p) => p.type === 'year')?.value;
+  const m = parts.find((p) => p.type === 'month')?.value;
+  const d = parts.find((p) => p.type === 'day')?.value;
+  return `${y}-${m}-${d}`;
+}
+
+/**
+ * Calendar range filter: `fromYmd` / `toYmd` are inclusive YYYY-MM-DD strings, or '' for open-ended.
+ * Both empty = show all dates (subject to other filters).
+ */
+export function matchesDateRangeFilter(event, { fromYmd, toYmd }) {
+  const f = String(fromYmd || '').trim();
+  const t = String(toYmd || '').trim();
+  if (!f && !t) return true;
+  const ev = eventStartYmdRichmond(event.startTime);
+  if (f && t) {
+    const a = f <= t ? f : t;
+    const b = f <= t ? t : f;
+    return ev >= a && ev <= b;
+  }
+  if (f) return ev >= f;
+  if (t) return ev <= t;
+  return true;
+}
+
+/** @deprecated Replaced by calendar range + matchesDateRangeFilter */
 export function matchesDatePreset(event, preset, now = new Date()) {
   if (preset === 'any') return true;
   const d = new Date(event.startTime);
