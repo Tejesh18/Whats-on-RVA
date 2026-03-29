@@ -128,13 +128,16 @@ export default function PlanningChatAssistant({
       <button
         type="button"
         onClick={doOpen}
-        className="fixed bottom-5 right-5 z-[90] flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-violet-600 to-indigo-700 text-2xl shadow-lg shadow-violet-900/30 ring-2 ring-white/90 transition hover:brightness-110 focus:outline-none focus-visible:ring-4 focus-visible:ring-amber-400/60"
+        className="fixed bottom-5 right-5 z-[90] flex items-center gap-2 rounded-full bg-gradient-to-r from-violet-600 to-indigo-700 py-3 pl-3.5 pr-5 text-white shadow-lg shadow-violet-900/30 ring-2 ring-white/90 transition hover:brightness-110 focus:outline-none focus-visible:ring-4 focus-visible:ring-amber-400/60 sm:bottom-6 sm:right-6"
         aria-expanded={open}
         aria-controls={panelId}
-        title="Open planning assistant"
+        title="Ask me — Richmond planning assistant"
       >
-        <span aria-hidden>💬</span>
-        <span className="sr-only">Planning assistant</span>
+        <span className="text-2xl leading-none" aria-hidden>
+          🤖
+        </span>
+        <span className="text-sm font-extrabold tracking-tight">Ask me</span>
+        <span className="sr-only">Open planning assistant</span>
       </button>
 
       {open ? (
