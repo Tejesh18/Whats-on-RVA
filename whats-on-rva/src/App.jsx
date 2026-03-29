@@ -61,6 +61,7 @@ import ReadyToIntegrateSection from './components/ReadyToIntegrateSection.jsx';
 import StoryDetailModal from './components/StoryDetailModal.jsx';
 import PlanMyNightModal from './components/PlanMyNightModal.jsx';
 import HomeSectionTabs from './components/HomeSectionTabs.jsx';
+import { rvaVoice } from './config/rvaVoice.js';
 
 const StoriesTabContent = lazy(() => import('./components/StoriesTabContent.jsx'));
 const PlanTabContent = lazy(() => import('./components/PlanTabContent.jsx'));
@@ -355,13 +356,13 @@ function HomeView({ hash }) {
   );
 
   return (
-    <div className="min-h-screen bg-zinc-950">
+    <div className="min-h-screen bg-rva-slate">
       <SiteHeader />
       <HeroSection />
 
       <main
         id="browse-events"
-        className="relative border-t border-white/5 bg-gradient-to-b from-zinc-100 via-[#f0ebe3] to-zinc-50"
+        className="relative border-t border-rva-brick/15 bg-rva-main-fade"
       >
         <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
           <ApiStatusBanner
@@ -371,10 +372,10 @@ function HomeView({ hash }) {
             onRetry={loadData}
           />
 
-          <p className="mt-2 text-center text-sm text-zinc-600 lg:text-left">
-            <strong className="font-semibold text-zinc-800">Events</strong> for listings &amp; map ·{' '}
-            <strong className="font-semibold text-zinc-800">Neighborhood stories</strong> for narratives &amp; zoom map ·{' '}
-            <strong className="font-semibold text-zinc-800">Plan &amp; personalize</strong> for assistant, trails, and For you.
+          <p className="mt-2 text-center text-sm text-rva-slate/75 lg:text-left">
+            <strong className="font-semibold text-rva-river">Events</strong> for listings &amp; Richmond map ·{' '}
+            <strong className="font-semibold text-rva-river">RVA stories</strong> for place-based guides &amp; the story map ·{' '}
+            <strong className="font-semibold text-rva-river">Plan your night</strong> for the assistant, trails, and For you.
           </p>
 
           <HomeSectionTabs value={homeSection} onChange={setHomeSection} />
@@ -430,14 +431,14 @@ function HomeView({ hash }) {
                 <div className="min-w-0 flex-1 lg:max-w-[min(100%,560px)] xl:max-w-[600px]">
                   <BrowseTabs value={browseTab} onChange={setBrowseTab} counts={tabCounts} />
                   {browseTab === 'foryou' ? (
-                    <div className="mt-4 space-y-3 rounded-2xl border border-amber-200/80 bg-gradient-to-br from-amber-50/90 to-white p-4 shadow-sm">
+                    <div className="mt-4 space-y-3 rounded-2xl border border-rva-gold/35 bg-gradient-to-br from-[#faf6e8]/95 to-white p-4 shadow-sm">
                       <p className="text-sm font-medium text-zinc-800">{forYouInsightLine(forYouCtx, listEvents[0])}</p>
                       <p className="text-xs italic text-zinc-600">
                         Example: Because you liked Jackson Ward jazz events, you may also like a poetry night in Church Hill — we
                         boost listings whose keywords echo stories you&apos;ve opened.
                       </p>
                       {forYouUsingFallback ? (
-                        <p className="text-xs font-semibold text-amber-900">
+                        <p className="text-xs font-semibold text-rva-brick-deep">
                           Showing a starter slice of the feed until personalization signals kick in.
                         </p>
                       ) : null}
@@ -449,7 +450,7 @@ function HomeView({ hash }) {
                               key={n}
                               type="button"
                               onClick={() => setFilters((f) => ({ ...f, neighborhood: n }))}
-                              className="rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-bold text-zinc-700 hover:border-amber-400"
+                              className="rounded-full border border-zinc-200 bg-white px-3 py-1 text-xs font-bold text-zinc-700 hover:border-rva-gold"
                             >
                               {n}
                             </button>
@@ -466,7 +467,7 @@ function HomeView({ hash }) {
                                 key={s}
                                 type="button"
                                 onClick={() => openStory(s)}
-                                className="rounded-full bg-zinc-900 px-3 py-1 text-xs font-bold text-white hover:bg-zinc-800"
+                                className="rounded-full bg-rva-river px-3 py-1 text-xs font-bold text-white hover:bg-rva-river-light"
                               >
                                 {st?.title || s}
                               </button>
@@ -478,7 +479,7 @@ function HomeView({ hash }) {
                   ) : null}
                   <p className="mt-4 text-sm font-medium text-zinc-500">
                     <span className="font-bold text-zinc-800">{listEvents.length}</span> event
-                    {listEvents.length === 1 ? '' : 's'}
+                    {listEvents.length === 1 ? '' : 's'} around RVA
                     {browseTab === 'foryou' ? ' · For you' : ''} · favorites saved in this browser
                   </p>
                   <div className="mt-5">
@@ -488,9 +489,7 @@ function HomeView({ hash }) {
                       selectedId={selectedId}
                       onSelectEvent={setSelectedId}
                       emptyMessage={
-                        browseTab === 'foryou'
-                          ? 'Nothing here yet — widen filters or save neighborhoods under Stories.'
-                          : 'Nothing matches — try clearing filters, date, or accessibility chips.'
+                        browseTab === 'foryou' ? rvaVoice.emptyForYou : rvaVoice.emptyEventsFiltered
                       }
                       favoriteIds={favEvents}
                       onToggleFavorite={toggleFavEvent}

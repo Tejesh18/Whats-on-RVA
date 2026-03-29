@@ -1,3 +1,5 @@
+import { rvaVoice } from '../config/rvaVoice.js';
+
 /**
  * Search-adjacent discovery: area, type, price, date, accessibility chips, quick actions.
  */
@@ -5,7 +7,7 @@ const A11Y_OPTIONS = [
   { id: 'family', label: 'Family friendly' },
   { id: 'wheelchair', label: 'Wheelchair accessible' },
   { id: 'multilingual', label: 'Multilingual' },
-  { id: 'transit', label: 'Transit friendly' },
+  { id: 'transit', label: 'GRTC / Pulse friendly' },
 ];
 
 export default function DiscoveryPanel({
@@ -38,21 +40,23 @@ export default function DiscoveryPanel({
   geoStatus,
 }) {
   const selectClass =
-    'w-full min-w-[120px] cursor-pointer appearance-none rounded-full border border-zinc-200/90 bg-white py-2.5 pl-4 pr-9 text-sm font-semibold text-zinc-800 shadow-sm outline-none transition hover:border-zinc-300 focus:border-amber-400/60 focus:ring-2 focus:ring-amber-400/25';
+    'w-full min-w-[120px] cursor-pointer appearance-none rounded-full border border-zinc-200/90 bg-white py-2.5 pl-4 pr-9 text-sm font-semibold text-zinc-800 shadow-sm outline-none transition hover:border-zinc-300 focus:border-rva-river/50 focus:ring-2 focus:ring-rva-river/20';
 
   const quickBase =
-    'rounded-full px-3 py-2 text-xs font-bold shadow-sm transition focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 sm:px-4 sm:text-sm';
-  const quickOn = 'bg-gradient-to-r from-amber-400 to-orange-500 text-zinc-900 ring-2 ring-amber-300 ring-offset-2 ring-offset-white';
-  const quickOff = 'border border-zinc-200 bg-white text-zinc-700 hover:border-zinc-300';
+    'rounded-full px-3 py-2 text-xs font-bold shadow-sm transition focus:outline-none focus:ring-2 focus:ring-rva-gold/50 focus:ring-offset-2 sm:px-4 sm:text-sm';
+  const quickOn =
+    'bg-gradient-to-r from-rva-brick to-rva-river text-white ring-2 ring-rva-gold/40 ring-offset-2 ring-offset-white';
+  const quickOff = 'border border-zinc-200 bg-white text-zinc-700 hover:border-rva-river/30';
 
   const catSet = savedCategories instanceof Set ? savedCategories : new Set();
 
   return (
     <div className="space-y-6">
+      <p className="text-sm leading-relaxed text-rva-slate/75">{rvaVoice.discoveryBlurb}</p>
       {onToggleSavedCategory ? (
         <div>
           <p className="mb-1.5 text-[10px] font-bold uppercase tracking-widest text-zinc-500">For you · saved event types</p>
-          <p className="mb-2 text-xs text-zinc-500">Tap categories you want recommended more often.</p>
+          <p className="mb-2 text-xs text-zinc-500">Tap the kinds of nights out you want to see more of in RVA.</p>
           <div className="flex max-h-[5.5rem] flex-wrap gap-2 overflow-y-auto [scrollbar-width:thin]">
             {categories.slice(0, 20).map((c) => {
               const on = catSet.has(c);
@@ -63,7 +67,9 @@ export default function DiscoveryPanel({
                   aria-pressed={on}
                   onClick={() => onToggleSavedCategory(c)}
                   className={`rounded-full px-3 py-1 text-[11px] font-bold transition ${
-                    on ? 'bg-violet-600 text-white shadow-md' : 'border border-zinc-200 bg-zinc-50 text-zinc-600 hover:border-violet-300'
+                    on
+                      ? 'bg-rva-river text-white shadow-md'
+                      : 'border border-zinc-200 bg-zinc-50 text-zinc-600 hover:border-rva-river/35'
                   }`}
                 >
                   {c}
@@ -113,7 +119,7 @@ export default function DiscoveryPanel({
                 onChange={(e) => onFiltersChange({ ...filters, neighborhood: e.target.value })}
                 className={selectClass}
               >
-                <option value="">All areas</option>
+                <option value="">All RVA</option>
                 {neighborhoods.map((n) => (
                   <option key={n} value={n}>
                     {n}
@@ -220,7 +226,7 @@ export default function DiscoveryPanel({
             onClick={onWeekendToggle}
             className={`${quickBase} ${weekendActive ? quickOn : quickOff}`}
           >
-            This weekend
+            This weekend in RVA
           </button>
           <button
             type="button"
@@ -235,11 +241,11 @@ export default function DiscoveryPanel({
           </button>
           {onRequestTravelEtaGeo ? (
             <button type="button" onClick={onRequestTravelEtaGeo} className={`${quickBase} ${quickOff}`}>
-              Trip hints from my location
-            </button>
+            Trip hints from where I am
+          </button>
           ) : null}
           <button type="button" onClick={onSurpriseMe} className={`${quickBase} ${quickOff}`}>
-            Surprise me
+            Surprise me in the city
           </button>
           <button
             type="button"
@@ -265,7 +271,7 @@ export default function DiscoveryPanel({
             </button>
           ) : null}
         </div>
-        {geoStatus ? <p className="mt-2 text-xs text-amber-800">{geoStatus}</p> : null}
+        {geoStatus ? <p className="mt-2 text-xs text-rva-brick-deep">{geoStatus}</p> : null}
       </div>
     </div>
   );

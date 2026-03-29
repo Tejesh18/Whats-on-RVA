@@ -8,12 +8,12 @@ export default function HiddenGemsStrip({ events, onSelectEvent }) {
     <section className="mb-10" aria-labelledby="gems-strip-heading">
       <div className="flex flex-wrap items-end justify-between gap-2">
         <div>
-          <h2 id="gems-strip-heading" className="font-display text-xl font-bold text-zinc-900">
-            Hidden gems
+          <h2 id="gems-strip-heading" className="font-display text-xl font-bold text-rva-slate">
+            Off Broad Street&apos;s beaten path
           </h2>
-          <p className="mt-1 max-w-2xl text-sm text-zinc-600">
-            Think poetry readings, mural strolls, small-room jazz, markets &amp; craft fairs —{' '}
-            <span className="font-semibold text-sky-800">Supporting local and community-led spaces</span>.
+          <p className="mt-1 max-w-2xl text-sm text-rva-slate/75">
+            Poetry slams, porch shows, gallery hops, night markets —{' '}
+            <span className="font-semibold text-rva-james">the small rooms that keep Richmond weird</span>.
           </p>
         </div>
       </div>
@@ -23,7 +23,7 @@ export default function HiddenGemsStrip({ events, onSelectEvent }) {
             <button
               type="button"
               onClick={() => onSelectEvent?.(e.id)}
-              className="flex w-full gap-3 rounded-2xl border border-sky-200/80 bg-gradient-to-br from-sky-50/90 to-white p-3 text-left shadow-sm transition hover:border-sky-400 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-sky-500 focus-visible:ring-offset-2"
+              className="flex w-full gap-3 rounded-2xl border border-rva-james/25 bg-gradient-to-br from-rva-cream to-white p-3 text-left shadow-sm transition hover:border-rva-river/40 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-rva-river/35 focus-visible:ring-offset-2"
             >
               <span className="relative h-20 w-20 shrink-0 overflow-hidden rounded-xl bg-zinc-200">
                 <img src={e.imageUrl} alt="" className="h-full w-full object-cover" loading="lazy" />
@@ -31,8 +31,8 @@ export default function HiddenGemsStrip({ events, onSelectEvent }) {
               <span className="min-w-0 flex-1">
                 <span className="line-clamp-2 block font-display text-sm font-bold text-zinc-900">{e.title}</span>
                 <span className="mt-0.5 block text-[11px] text-zinc-500">{formatEventWhen(e.startTime)}</span>
-                <span className="mt-0.5 block truncate text-xs text-sky-900">{e.venue}</span>
-                <span className="mt-1 inline-block rounded-md bg-sky-600/15 px-1.5 py-0.5 text-[10px] font-bold text-sky-800">
+                <span className="mt-0.5 block truncate text-xs text-rva-river">{e.venue}</span>
+                <span className="mt-1 inline-block rounded-md bg-rva-river/12 px-1.5 py-0.5 text-[10px] font-bold text-rva-river">
                   {displaySourceLabel(e.sourceName)}
                 </span>
               </span>

@@ -2,6 +2,7 @@ import ForYouSection from './ForYouSection.jsx';
 import WalkingTourChooser from './WalkingTourChooser.jsx';
 import WalkingTourPanel from './WalkingTourPanel.jsx';
 import CulturalTrailsPanel from './CulturalTrailsPanel.jsx';
+import { rvaVoice } from '../config/rvaVoice.js';
 
 export default function PlanTabContent({
   discoverySorted,
@@ -15,24 +16,21 @@ export default function PlanTabContent({
 }) {
   return (
     <div className="space-y-8">
-      <section className="rounded-2xl border border-violet-200 bg-gradient-to-br from-violet-50 to-white p-5 shadow-sm">
-        <h2 className="font-display text-xl font-bold text-zinc-900">Planning assistant</h2>
-        <p className="mt-2 text-sm leading-relaxed text-zinc-600">
-          Ask in natural language — like ChatGPT, it answers with full sentences and numbered picks from your loaded
-          calendar. Everything runs in your browser unless you configure a server URL.
-        </p>
+      <section className="rounded-2xl border border-rva-river/20 bg-gradient-to-br from-rva-cream to-white p-5 shadow-sm">
+        <h2 className="font-display text-xl font-bold text-rva-slate">RVA planning assistant</h2>
+        <p className="mt-2 text-sm leading-relaxed text-rva-slate/75">{rvaVoice.planAssistantBlurb}</p>
         <div className="mt-4 flex flex-wrap gap-3">
           <button
             type="button"
             onClick={onOpenAssistant}
-            className="rounded-xl bg-violet-600 px-5 py-3 text-sm font-bold text-white shadow-sm hover:bg-violet-700"
+            className="rounded-xl bg-rva-river px-5 py-3 text-sm font-bold text-white shadow-sm hover:bg-rva-river-light"
           >
-            Open chat assistant
+            Open Ask me
           </button>
           <button
             type="button"
             onClick={onOpenPlanMyNight}
-            className="rounded-xl border border-zinc-200 bg-white px-5 py-3 text-sm font-bold text-zinc-800 hover:border-amber-300"
+            className="rounded-xl border border-zinc-200 bg-white px-5 py-3 text-sm font-bold text-zinc-800 hover:border-rva-gold"
           >
             Plan my night (form)
           </button>

@@ -2,24 +2,24 @@ import { siteConfig } from '../config/siteConfig.js';
 
 const edges = [
   {
-    title: 'Richmond-native, not global noise',
-    body: `Search and maps stay scoped to the city. You’re not competing with every metro for attention — ${siteConfig.siteName} is built as a front door for RVA nights out.`,
+    title: 'City-scoped, not “everywhere USA”',
+    body: `Listings and the map honor Richmond’s municipal footprint — so you’re not drowning in Henrico strip-mall noise when you meant a night around Broad Street, Church Hill, or the James.`,
   },
   {
-    title: 'Place matters: stories, not just tickets',
-    body: 'Neighborhood timelines, zoom-to-story maps, before/after views, and community voices — so you understand *where* you’re going, not only who’s headlining.',
+    title: 'Neighborhoods first',
+    body: 'Stories, spotlights, and filters speak the language locals use: the Fan, Jackson Ward, Manchester, Scott’s Addition — place as part of the plan, not an afterthought.',
   },
   {
-    title: 'Discovery-first planning',
-    body: 'For you picks, cultural trails, hidden gems, “tonight / weekend” modes, and a planning assistant that talks like a local — built for “what should we do?” not just checkout.',
+    title: 'Built for “what are we doing?”',
+    body: 'Tonight and weekend modes, hidden gems, cultural trails, and a planning assistant tuned to what’s already on your screen — closer to a knowledgeable friend than a checkout funnel.',
   },
   {
-    title: 'Support the ecosystem you care about',
-    body: 'Signals for small venues, community-led orgs, and grassroots culture — plus filters that prioritize the kind of Richmond you want to show up for.',
+    title: 'Champion small rooms & community orgs',
+    body: 'Signals and filters lift grassroots culture, small venues, and community-led programming — the layer of Richmond that doesn’t always buy the biggest ads.',
   },
   {
-    title: 'Your sources, one calm surface',
-    body: 'Pulls from public Richmond calendars (e.g. CultureWorks) and can layer optional ticket-listing feeds when you configure them — one map-and-feed surface.',
+    title: 'One calm surface for public feeds',
+    body: 'CultureWorks-style calendars (and optional partner ticket search when you wire it) land in one map-and-list experience — discovery without rebuilding a city CMS.',
   },
 ];
 
@@ -27,21 +27,21 @@ export default function WhyUsSection() {
   return (
     <section
       id="why-us"
-      className="relative scroll-mt-20 border-b border-zinc-800/80 bg-gradient-to-b from-zinc-900 via-zinc-900 to-zinc-950"
+      className="relative scroll-mt-20 border-b border-rva-brick/25 bg-gradient-to-b from-rva-slate via-rva-slate to-[#1a1d28]"
       aria-labelledby="why-us-heading"
     >
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-amber-500/40 to-transparent" />
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-rva-gold/45 to-transparent" />
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 sm:py-14 lg:px-8">
         <div className="mx-auto max-w-3xl text-center">
-          <p className="text-xs font-bold uppercase tracking-[0.2em] text-amber-400/90">Why us</p>
+          <p className="text-xs font-bold uppercase tracking-[0.2em] text-rva-gold">Why us</p>
           <h2 id="why-us-heading" className="mt-3 font-display text-3xl font-bold tracking-tight text-white sm:text-4xl">
             Why {siteConfig.siteName}?
           </h2>
           <p className="mt-4 text-base leading-relaxed text-zinc-400 sm:text-lg">
-            <strong className="font-semibold text-zinc-200">Big ticketing apps excel at checkout</strong> when you already know
-            the show. We’re optimized for something different:{' '}
-            <strong className="font-semibold text-zinc-200">exploring Richmond with context</strong> — neighborhoods, culture,
-            and plans that match how people actually go out here.
+            <strong className="font-semibold text-zinc-200">Big apps are built for transactions</strong> when you already know
+            the artist. We&apos;re for{' '}
+            <strong className="font-semibold text-zinc-200">wandering Richmond with context</strong> — the River City&apos;s
+            neighborhoods, its creative rooms, and the way people actually string a night together.
           </p>
         </div>
 
@@ -49,21 +49,20 @@ export default function WhyUsSection() {
           {edges.map((item) => (
             <article
               key={item.title}
-              className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-lg shadow-black/20 backdrop-blur-sm transition hover:border-amber-500/25 hover:bg-white/[0.06]"
+              className="rounded-2xl border border-white/10 bg-white/[0.04] p-5 shadow-lg shadow-black/20 backdrop-blur-sm transition hover:border-rva-gold/30 hover:bg-white/[0.06]"
             >
-              <h3 className="font-display text-base font-bold text-amber-100 sm:text-lg">{item.title}</h3>
+              <h3 className="font-display text-base font-bold text-[#f5e6b8] sm:text-lg">{item.title}</h3>
               <p className="mt-2 text-sm leading-relaxed text-zinc-400">{item.body}</p>
             </article>
           ))}
         </div>
 
-        <div className="mx-auto mt-10 max-w-3xl rounded-2xl border border-white/10 bg-black/30 px-5 py-5 text-center sm:px-8">
-          <p className="text-sm font-semibold text-zinc-200">We’re honest about the handoff</p>
+        <div className="mx-auto mt-10 max-w-3xl rounded-2xl border border-rva-river/35 bg-rva-river/15 px-5 py-5 text-center sm:px-8">
+          <p className="text-sm font-semibold text-zinc-200">Still the organizer&apos;s show</p>
           <p className="mt-2 text-sm leading-relaxed text-zinc-500">
-            You’ll still open organizers’ pages for tickets, refunds, and last-minute changes — we’re the{' '}
-            <strong className="text-zinc-300">discovery and cultural layer</strong> on top, not a replacement box office.
-            Alongside whatever app you use to buy tickets, the goal is simple:{' '}
-            <strong className="text-zinc-300">make Richmond easier to love night by night.</strong>
+            You&apos;ll open venue and presenter pages for tickets, refunds, and last-minute changes — we&apos;re the{' '}
+            <strong className="text-zinc-300">discovery layer</strong>, not the box office. The hope is simple:{' '}
+            <strong className="text-zinc-300">make RVA easier to love night by night.</strong>
           </p>
         </div>
       </div>

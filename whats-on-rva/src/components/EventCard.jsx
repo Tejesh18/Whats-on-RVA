@@ -34,7 +34,7 @@ function EventCard({
       id={`event-card-${event.id}`}
       className={`rva-feed-card group overflow-hidden rounded-xl border bg-white shadow-sm transition-[box-shadow,border-color] duration-150 hover:border-zinc-300 hover:shadow-md ${
         selected
-          ? 'border-amber-400 ring-2 ring-amber-400/30'
+          ? 'border-rva-gold ring-2 ring-rva-gold/40'
           : 'border-zinc-200'
       }`}
     >
@@ -55,18 +55,18 @@ function EventCard({
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-80 sm:bg-gradient-to-r" />
           <div className="absolute left-3 top-3 flex flex-col rounded-xl bg-white/95 px-2.5 py-1.5 text-center shadow-lg backdrop-blur-sm">
-            <span className="text-[10px] font-bold uppercase leading-none text-amber-600">{month}</span>
+            <span className="text-[10px] font-bold uppercase leading-none text-rva-brick">{month}</span>
             <span className="font-display text-xl font-bold leading-none text-zinc-900">{day}</span>
           </div>
           <div className="absolute bottom-2 left-2 right-2 flex flex-wrap gap-1 sm:bottom-3 sm:left-3 sm:right-3">
             {event.featured ? (
-              <span className="rounded-md bg-amber-400 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-zinc-900">
-                Featured
+              <span className="rounded-md bg-rva-gold px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-rva-slate">
+                RVA spotlight
               </span>
             ) : null}
             {event.hiddenGem ? (
-              <span className="rounded-md bg-sky-600/95 px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
-                Hidden gem
+              <span className="rounded-md bg-rva-james px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide text-white">
+                Local gem
               </span>
             ) : null}
           </div>
@@ -89,13 +89,13 @@ function EventCard({
             <button
               type="button"
               onClick={() => onActivate?.(event.id)}
-              className="text-left transition hover:text-sky-700 focus:outline-none focus-visible:underline"
+              className="text-left transition hover:text-rva-river focus:outline-none focus-visible:underline"
             >
               {event.title}
             </button>
           </h3>
           <p className="mt-1 text-sm font-medium text-zinc-500">{when}</p>
-          <p className="mt-1 truncate text-sm font-semibold text-sky-800">{event.venue}</p>
+          <p className="mt-1 truncate text-sm font-semibold text-rva-river">{event.venue}</p>
           <p className="truncate text-xs text-zinc-400">{event.neighborhood}</p>
 
           {typeof event.latitude === 'number' && typeof event.longitude === 'number' ? (
@@ -148,9 +148,9 @@ function EventCard({
             <button
               type="button"
               onClick={() => onOpenStory?.(relatedStorySlug)}
-              className="mt-3 w-full rounded-xl border border-violet-200 bg-violet-50/80 py-2 text-xs font-bold text-violet-900 transition hover:bg-violet-100 sm:w-auto sm:px-4"
+              className="mt-3 w-full rounded-xl border border-rva-river/25 bg-rva-cream py-2 text-xs font-bold text-rva-river transition hover:bg-white sm:w-auto sm:px-4"
             >
-              Related neighborhood story
+              Related RVA story
             </button>
           ) : null}
 
@@ -160,8 +160,8 @@ function EventCard({
               onClick={() => onToggleSave?.(event.id)}
               className={`rounded-xl px-4 py-2 text-xs font-bold transition ${
                 saved
-                  ? 'bg-amber-400 text-zinc-900'
-                  : 'border border-zinc-200 bg-zinc-50 text-zinc-700 hover:border-amber-300'
+                  ? 'bg-rva-gold text-rva-slate'
+                  : 'border border-zinc-200 bg-zinc-50 text-zinc-700 hover:border-rva-gold'
               }`}
             >
               {saved ? 'Saved' : 'Save'}
@@ -177,7 +177,7 @@ function EventCard({
               href={event.sourceUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex flex-1 items-center justify-center rounded-lg bg-zinc-900 py-2.5 text-sm font-bold text-white transition hover:bg-zinc-800 sm:flex-none sm:px-6"
+              className="inline-flex flex-1 items-center justify-center rounded-lg bg-rva-river py-2.5 text-sm font-bold text-white transition hover:bg-rva-river-light sm:flex-none sm:px-6"
             >
               Get tickets
             </a>

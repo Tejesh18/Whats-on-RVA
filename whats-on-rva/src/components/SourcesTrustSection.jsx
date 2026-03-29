@@ -1,13 +1,13 @@
 export default function SourcesTrustSection() {
   const items = [
     {
-      title: 'CultureWorks Localist API',
-      body: 'Richmond CultureWorks calendar JSON is the default live source — same family of tools many regions call “Localist.”',
+      title: 'CultureWorks (Localist) — RVA calendar',
+      body: 'Richmond CultureWorks publishes the city’s arts-and-culture calendar as JSON — the default live pipeline for What’s On RVA.',
       status: 'Live',
     },
     {
       title: 'Partner ticket search',
-      body: 'Optional listings near Richmond: dev proxy with a private API token, or your own HTTPS proxy in production.',
+      body: 'Optional layer of ticketed listings near the city — local dev uses a proxy token; production needs your own HTTPS forwarder.',
       status: 'Optional',
     },
     {
@@ -37,12 +37,12 @@ export default function SourcesTrustSection() {
       className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8"
       aria-labelledby="sources-trust-heading"
     >
-      <h2 id="sources-trust-heading" className="font-display text-2xl font-bold text-zinc-900">
-        Built from existing public sources
+      <h2 id="sources-trust-heading" className="font-display text-2xl font-bold text-rva-slate">
+        Richmond sources &amp; future partners
       </h2>
-      <p className="mt-2 max-w-3xl text-sm text-zinc-600">
-        We aggregate what&apos;s already published — you always confirm details on the organizer&apos;s site.
-        Story copy on this demo is editorial illustration until museum partners wire in.
+      <p className="mt-2 max-w-3xl text-sm text-rva-slate/75">
+        We surface what&apos;s already public — you still confirm date, price, and accessibility on the venue or presenter&apos;s
+        page. Story modals are editorial stand-ins until museums and archives plug in verified media.
       </p>
       <ul className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((it) => (

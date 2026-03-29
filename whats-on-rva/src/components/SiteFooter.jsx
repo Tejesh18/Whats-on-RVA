@@ -6,7 +6,7 @@ export default function SiteFooter() {
     'text-rva-river underline decoration-rva-slate/20 underline-offset-2 hover:decoration-rva-river';
 
   return (
-    <footer className="border-t border-rva-slate/10 bg-white">
+    <footer className="border-t border-rva-brick/15 bg-rva-cream">
       <div className="mx-auto max-w-3xl px-4 py-8 text-center sm:px-6 lg:px-8">
         <nav
           className="flex flex-wrap items-center justify-center gap-x-5 gap-y-2 text-sm font-semibold text-rva-slate/70"
@@ -26,9 +26,9 @@ export default function SiteFooter() {
         <p className="mt-8 text-sm leading-relaxed text-rva-slate/70">
           <strong className="font-semibold text-rva-slate">{siteConfig.siteName}</strong> is operated
           by <strong className="font-semibold text-rva-slate">{siteConfig.legalEntity}</strong>. We are
-          an independent guide to arts and culture listings — we don&apos;t sell tickets or control
-          event details. Every &quot;Get tickets / details&quot; link goes to the organizer or venue.
-          Confirm date, time, price, and accessibility there before you attend.
+          an independent <strong className="font-semibold text-rva-slate">River City</strong> discovery layer — we don&apos;t
+          sell tickets or control listings. Every &quot;Get tickets / details&quot; link goes to the organizer or venue.
+          Confirm date, time, price, and accessibility there before you cross the bridge or catch the Pulse.
         </p>
         <p className="mt-4 text-xs leading-relaxed text-rva-slate/50">
           Listings come from public sources and may be incomplete or out of date. Map pins are

@@ -3,7 +3,7 @@
 @tailwind utilities;
 
 body {
-  @apply bg-zinc-950 text-zinc-900 antialiased;
+  @apply bg-rva-slate text-zinc-900 antialiased;
 }
 
 .leaflet-container {

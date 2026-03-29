@@ -7,7 +7,7 @@ const StoryExploreMap = lazy(() => import('./StoryExploreMap.jsx'));
 function MapFallback() {
   return (
     <div className="flex h-[min(380px,55vh)] items-center justify-center rounded-2xl border border-zinc-200 bg-zinc-100 text-sm text-zinc-500">
-      Loading story map…
+      Loading Richmond story map…
     </div>
   );
 }
@@ -33,9 +33,10 @@ export default function StoriesTabContent({
         onAfterShowEvents={() => onSwitchToEventsTab?.()}
       />
       <section>
-        <h2 className="font-display text-lg font-bold text-zinc-900">Explore by map</h2>
-        <p className="mt-1 text-sm text-zinc-600">
-          This map is only for stories — zoom into a zone to surface the narrative for that area.
+        <h2 className="font-display text-lg font-bold text-rva-slate">Richmond story map</h2>
+        <p className="mt-1 text-sm text-rva-slate/75">
+          Pan and zoom the city — pins unlock neighborhood essays, timelines, and the history layered under today&apos;s
+          venues.
         </p>
         <div className="mt-4">
           <Suspense fallback={<MapFallback />}>

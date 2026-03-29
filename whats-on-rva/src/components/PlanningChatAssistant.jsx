@@ -8,7 +8,7 @@ function AssistantRichText({ text }) {
     const trimmed = block.trim();
     if (trimmed.startsWith('### ')) {
       return (
-        <h4 key={bi} className="mt-3 first:mt-0 font-display text-sm font-bold text-violet-950">
+        <h4 key={bi} className="mt-3 first:mt-0 font-display text-sm font-bold text-rva-river">
           {trimmed.replace(/^###\s+/, '')}
         </h4>
       );
@@ -68,11 +68,11 @@ export default function PlanningChatAssistant({
     {
       role: 'assistant',
       text: [
-        'Hi — I’m your **Richmond planning assistant**.',
+        'Hi — I’m your **RVA night-out copilot**.',
         '',
-        'Ask me anything in natural language (like you would with ChatGPT). I’ll answer in full sentences, call out how I interpreted your request, and suggest concrete listings from **what’s already loaded** on this site.',
+        'Ask in plain English. I only see **what’s already loaded** from Richmond feeds in this tab, answer in full sentences, and point to concrete listings when they match.',
         '',
-        'Try: “We’re two people, want something **free** and outdoors **Saturday afternoon**” or “**Jazz** near **Jackson Ward** tonight.”',
+        'Try: “Two of us, **free**, outdoors **Saturday afternoon** near the James” or “**Jazz** around **Jackson Ward** tonight after dinner on Broad.”',
       ].join('\n\n'),
     },
   ]);
@@ -128,7 +128,7 @@ export default function PlanningChatAssistant({
       <button
         type="button"
         onClick={doOpen}
-        className="fixed bottom-5 right-5 z-[90] flex items-center gap-2 rounded-full bg-gradient-to-r from-violet-600 to-indigo-700 py-3 pl-3.5 pr-5 text-white shadow-lg shadow-violet-900/30 ring-2 ring-white/90 transition hover:brightness-110 focus:outline-none focus-visible:ring-4 focus-visible:ring-amber-400/60 sm:bottom-6 sm:right-6"
+        className="fixed bottom-5 right-5 z-[90] flex items-center gap-2 rounded-full bg-gradient-to-r from-rva-brick to-rva-river py-3 pl-3.5 pr-5 text-white shadow-lg shadow-rva-slate/35 ring-2 ring-white/90 transition hover:brightness-110 focus:outline-none focus-visible:ring-4 focus-visible:ring-rva-gold/55 sm:bottom-6 sm:right-6"
         aria-expanded={open}
         aria-controls={panelId}
         title="Ask me — Richmond planning assistant"
@@ -150,13 +150,13 @@ export default function PlanningChatAssistant({
           <button type="button" className="absolute inset-0 bg-black/40" aria-label="Close assistant" onClick={doClose} />
           <div
             id={panelId}
-            className="relative flex h-[min(100dvh,560px)] w-full max-w-md flex-col overflow-hidden rounded-t-3xl border border-zinc-200 bg-white shadow-2xl sm:h-[min(560px,88vh)] sm:rounded-2xl"
+            className="relative flex h-[min(100dvh,560px)] w-full max-w-md flex-col overflow-hidden rounded-t-3xl border border-rva-river/15 bg-white shadow-2xl sm:h-[min(560px,88vh)] sm:rounded-2xl"
           >
-            <div className="flex items-center justify-between border-b border-zinc-100 bg-gradient-to-r from-violet-700 to-indigo-800 px-4 py-3 text-white">
+            <div className="flex items-center justify-between border-b border-white/10 bg-gradient-to-r from-rva-river to-rva-james px-4 py-3 text-white">
               <div>
                 <p className="font-display text-lg font-bold">Planning assistant</p>
-                <p className="text-[11px] font-medium text-violet-100/90">
-                  Chat-style answers · local data · optional server AI
+                <p className="text-[11px] font-medium text-white/85">
+                  RVA listings · chat answers · optional server AI
                 </p>
               </div>
               <button
@@ -174,8 +174,8 @@ export default function PlanningChatAssistant({
                   key={i}
                   className={`rounded-2xl px-3 py-2.5 text-sm ${
                     msg.role === 'user'
-                      ? 'ml-6 bg-zinc-900 text-white'
-                      : 'mr-2 bg-violet-50/90 text-zinc-800 ring-1 ring-violet-100/80'
+                      ? 'ml-6 bg-rva-river text-white'
+                      : 'mr-2 bg-rva-cream/95 text-zinc-800 ring-1 ring-rva-river/12'
                   }`}
                 >
                   {msg.role === 'user' ? (
@@ -184,13 +184,13 @@ export default function PlanningChatAssistant({
                     <AssistantRichText text={msg.text} />
                   )}
                   {msg.source ? (
-                    <p className="mt-2 text-[10px] font-semibold uppercase tracking-wide text-violet-600/80">
+                    <p className="mt-2 text-[10px] font-semibold uppercase tracking-wide text-rva-james">
                       {msg.source === 'remote' ? 'Connected model / server' : 'On-device reasoning'}
                     </p>
                   ) : null}
                   {msg.picks?.length ? (
-                    <div className="mt-3 flex flex-col gap-1.5 border-t border-violet-200/60 pt-2">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-violet-800/80">Quick picks</p>
+                    <div className="mt-3 flex flex-col gap-1.5 border-t border-rva-river/15 pt-2">
+                      <p className="text-[10px] font-bold uppercase tracking-widest text-rva-river">Quick picks</p>
                       {msg.picks.map((e) => (
                         <button
                           key={e.id}
@@ -199,7 +199,7 @@ export default function PlanningChatAssistant({
                             onSelectEvent?.(e.id);
                             doClose();
                           }}
-                          className="rounded-lg bg-white px-2 py-1.5 text-left text-xs font-bold text-violet-950 ring-1 ring-violet-200 hover:bg-violet-100"
+                          className="rounded-lg bg-white px-2 py-1.5 text-left text-xs font-bold text-rva-slate ring-1 ring-rva-river/20 hover:bg-rva-cream"
                         >
                           {e.title}
                         </button>
@@ -224,7 +224,7 @@ export default function PlanningChatAssistant({
                     onOpenPlanMyNight();
                     doClose();
                   }}
-                  className="mb-2 w-full rounded-xl border border-amber-200 bg-amber-50 py-2 text-xs font-bold text-amber-950 hover:bg-amber-100"
+                  className="mb-2 w-full rounded-xl border border-rva-gold/40 bg-[#faf6e8] py-2 text-xs font-bold text-rva-brick-deep hover:bg-rva-gold/15"
                 >
                   Open structured “Plan my night” form
                 </button>
@@ -234,8 +234,8 @@ export default function PlanningChatAssistant({
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), send())}
-                  placeholder="Ask anything about your loaded events…"
-                  className="min-w-0 flex-1 rounded-xl border border-zinc-200 px-3 py-2.5 text-sm outline-none focus:border-violet-400 focus:ring-2 focus:ring-violet-200"
+                  placeholder="Ask about tonight in RVA, the Fan, free stuff, kids…"
+                  className="min-w-0 flex-1 rounded-xl border border-zinc-200 px-3 py-2.5 text-sm outline-none focus:border-rva-river focus:ring-2 focus:ring-rva-river/20"
                   disabled={busy}
                   aria-label="Message to planning assistant"
                 />
@@ -243,7 +243,7 @@ export default function PlanningChatAssistant({
                   type="button"
                   onClick={send}
                   disabled={busy || !input.trim()}
-                  className="shrink-0 rounded-xl bg-violet-600 px-4 py-2 text-sm font-bold text-white hover:bg-violet-700 disabled:opacity-40"
+                  className="shrink-0 rounded-xl bg-rva-river px-4 py-2 text-sm font-bold text-white hover:bg-rva-river-light disabled:opacity-40"
                 >
                   Send
                 </button>

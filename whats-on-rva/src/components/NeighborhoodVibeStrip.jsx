@@ -5,11 +5,11 @@ const STORY_SET = new Set(STORY_SLUGS);
 
 export default function NeighborhoodVibeStrip({ onOpenStory }) {
   return (
-    <section className="mt-8" aria-label="Neighborhood vibe profiles">
+    <section className="mt-8" aria-label="Richmond neighborhood vibe profiles">
       <div className="mb-3 flex flex-wrap items-end justify-between gap-2">
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-widest text-zinc-500">Neighborhood vibes</p>
-          <h2 className="font-display text-xl font-bold text-zinc-900">Quick profiles</h2>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-rva-slate/55">Around the city</p>
+          <h2 className="font-display text-xl font-bold text-rva-slate">Neighborhood cheat sheets</h2>
         </div>
       </div>
       <div className="flex gap-4 overflow-x-auto pb-2 pt-1 [scrollbar-width:thin]">
@@ -21,9 +21,9 @@ export default function NeighborhoodVibeStrip({ onOpenStory }) {
               className="w-[min(100%,280px)] shrink-0 rounded-2xl border border-zinc-200/90 bg-white p-4 shadow-md shadow-zinc-900/5"
             >
               <h3 className="font-display text-lg font-bold text-zinc-900">{v.name}</h3>
-              <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-amber-700/90">Best known for</p>
+              <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-rva-brick/90">Best known for</p>
               <p className="text-sm text-zinc-600">{v.bestKnownFor}</p>
-              <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-sky-800/90">Typical events</p>
+              <p className="mt-2 text-xs font-semibold uppercase tracking-wide text-rva-river/90">Typical nights out</p>
               <p className="text-sm text-zinc-600">{v.typicalEvents}</p>
               <div className="mt-2 flex flex-wrap gap-1 text-[11px] text-zinc-500">
                 <span className="font-bold text-zinc-700">Price:</span> {v.priceLevel}

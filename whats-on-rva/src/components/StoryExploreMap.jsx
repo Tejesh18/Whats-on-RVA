@@ -61,11 +61,11 @@ export default function StoryExploreMap({ onOpenStory }) {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="rounded-2xl border border-violet-200/80 bg-violet-50/40 px-4 py-3 text-sm text-zinc-700">
-        <p className="font-display font-bold text-violet-950">Interactive story map</p>
+      <div className="rounded-2xl border border-rva-james/25 bg-rva-cream/80 px-4 py-3 text-sm text-zinc-700">
+        <p className="font-display font-bold text-rva-slate">Richmond story map</p>
         <p className="mt-1 text-xs leading-relaxed text-zinc-600">
-          Zoom to level {STORY_ZONE_POLYGONS[0]?.minZoom}+ and center the map inside a colored neighborhood — a{' '}
-          <strong>story card appears on the map</strong>. Orange pins open stories anytime.
+          Zoom to level {STORY_ZONE_POLYGONS[0]?.minZoom}+ and center on a colored corridor — a{' '}
+          <strong>story card surfaces on the map</strong>. Orange pins jump straight into a neighborhood essay anytime.
         </p>
       </div>
 
@@ -91,9 +91,9 @@ export default function StoryExploreMap({ onOpenStory }) {
           <Rectangle
             bounds={CITY_RECT}
             pathOptions={{
-              color: '#f59e0b',
+              color: '#C4A035',
               weight: 1,
-              opacity: 0.4,
+              opacity: 0.45,
               fillOpacity: 0.02,
               dashArray: '6 10',
             }}
@@ -109,7 +109,7 @@ export default function StoryExploreMap({ onOpenStory }) {
                 <p className="m-0 max-w-[200px] text-sm font-bold text-zinc-900">{s.title}</p>
                 <button
                   type="button"
-                  className="mt-2 w-full rounded-md bg-violet-600 py-1.5 text-xs font-bold text-white"
+                  className="mt-2 w-full rounded-md bg-rva-river py-1.5 text-xs font-bold text-white"
                   onClick={() => onOpenStory?.(s.slug)}
                 >
                   Open story
@@ -127,13 +127,13 @@ export default function StoryExploreMap({ onOpenStory }) {
           {!activeStory ? (
             <div className="pointer-events-none flex justify-center">
               <div className="max-w-sm rounded-2xl bg-zinc-950/80 px-4 py-2.5 text-center text-xs font-medium leading-snug text-white shadow-lg backdrop-blur-md ring-1 ring-white/15">
-                Pan &amp; zoom — when you&apos;re <strong className="text-amber-200">centered in a zone</strong>, its story
+                Pan across RVA — when you&apos;re <strong className="text-rva-gold">centered in a zone</strong>, its story
                 pops up on this map.
               </div>
             </div>
           ) : (
             <div className="pointer-events-auto" style={{ animation: 'rvaStoryCardIn 0.35s ease-out both' }}>
-              <div className="mx-auto flex max-w-lg flex-col overflow-hidden rounded-2xl border border-violet-200/90 bg-white/95 shadow-2xl shadow-violet-900/20 ring-1 ring-black/5 backdrop-blur-md sm:flex-row sm:max-w-xl">
+              <div className="mx-auto flex max-w-lg flex-col overflow-hidden rounded-2xl border border-rva-river/20 bg-white/95 shadow-2xl shadow-rva-slate/15 ring-1 ring-black/5 backdrop-blur-md sm:flex-row sm:max-w-xl">
                 <div className="relative h-36 w-full shrink-0 sm:h-auto sm:w-36 sm:min-h-[140px]">
                   <img
                     src={activeStory.heroImage}
@@ -147,14 +147,14 @@ export default function StoryExploreMap({ onOpenStory }) {
                   </span>
                 </div>
                 <div className="flex min-w-0 flex-1 flex-col justify-center p-4">
-                  <p className="text-[10px] font-bold uppercase tracking-widest text-violet-600">Story in this view</p>
+                  <p className="text-[10px] font-bold uppercase tracking-widest text-rva-river">Story in this view</p>
                   <h3 className="mt-1 font-display text-lg font-bold leading-tight text-zinc-900">{activeStory.title}</h3>
                   <p className="mt-2 line-clamp-2 text-sm leading-snug text-zinc-600">{activeStory.shortDescription}</p>
                   <div className="mt-3 flex flex-wrap gap-2">
                     <button
                       type="button"
                       onClick={() => onOpenStory?.(activeStory.slug)}
-                      className="rounded-xl bg-violet-600 px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-violet-700 active:scale-[0.98]"
+                      className="rounded-xl bg-rva-river px-4 py-2.5 text-sm font-bold text-white shadow-sm transition hover:bg-rva-river-light active:scale-[0.98]"
                     >
                       Open full story
                     </button>

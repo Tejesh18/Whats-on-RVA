@@ -12,11 +12,11 @@ export default function ForYouSection({ events, favoriteNeighborhoods, onSelectE
 
   return (
     <section className="mb-10" aria-labelledby="for-you-heading">
-      <h2 id="for-you-heading" className="font-display text-xl font-bold text-zinc-900">
-        For you
+      <h2 id="for-you-heading" className="font-display text-xl font-bold text-rva-slate">
+        For you · your RVA pockets
       </h2>
-      <p className="mt-1 text-sm text-zinc-600">
-        Based on neighborhoods you&apos;ve saved — tap to focus on the map.
+      <p className="mt-1 text-sm text-rva-slate/75">
+        Pulled from neighborhoods you&apos;ve hearted — tap a card to zoom the Richmond map.
       </p>
       <ul className="mt-4 flex gap-3 overflow-x-auto pb-1 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {matched.map((e) => (
@@ -24,11 +24,11 @@ export default function ForYouSection({ events, favoriteNeighborhoods, onSelectE
             <button
               type="button"
               onClick={() => onSelectEvent?.(e.id)}
-              className="w-full rounded-2xl border border-zinc-200 bg-white p-3 text-left shadow-sm transition hover:border-amber-300"
+              className="w-full rounded-2xl border border-zinc-200 bg-white p-3 text-left shadow-sm transition hover:border-rva-gold"
             >
               <p className="line-clamp-2 font-display text-sm font-bold text-zinc-900">{e.title}</p>
               <p className="mt-1 text-xs text-zinc-500">{formatEventWhen(e.startTime)}</p>
-              <p className="truncate text-xs font-medium text-amber-800">{e.neighborhood}</p>
+              <p className="truncate text-xs font-medium text-rva-river">{e.neighborhood}</p>
             </button>
           </li>
         ))}

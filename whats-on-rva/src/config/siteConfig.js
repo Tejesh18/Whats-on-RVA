@@ -25,7 +25,7 @@ export const siteConfig = {
   publicSiteUrl: (env.VITE_PUBLIC_SITE_URL || 'https://whatsonrva.com').replace(/\/$/, ''),
 
   /** Shown in policies / hero */
-  regionLabel: 'Richmond, Virginia',
+  regionLabel: 'Richmond, Virginia · RVA',
 
   /** Update when you change Privacy or Terms */
   policiesLastUpdated: 'March 28, 2026',

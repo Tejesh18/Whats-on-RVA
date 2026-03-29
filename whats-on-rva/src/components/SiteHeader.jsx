@@ -4,7 +4,7 @@ import { useAuth } from '../context/AuthContext.jsx';
 import AuthModal from './AuthModal.jsx';
 
 const link =
-  'text-xs font-semibold text-zinc-400 transition hover:text-white sm:text-sm';
+  'text-xs font-semibold text-zinc-400 transition hover:text-rva-gold sm:text-sm';
 
 export default function SiteHeader() {
   const { user, logout } = useAuth();
@@ -12,13 +12,13 @@ export default function SiteHeader() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 border-b border-white/10 bg-zinc-950/90 text-white backdrop-blur-xl">
+      <header className="sticky top-0 z-40 border-b border-rva-brick/25 bg-rva-slate/92 text-white backdrop-blur-xl">
         <div className="mx-auto max-w-7xl px-4 py-3 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div className="min-w-0">
               <a href="#" className="block">
-                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-amber-400/90">
-                  Richmond, VA — city listings
+                <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-rva-gold">
+                  RVA · James River city · listings in city limits
                 </p>
                 <p className="font-display text-2xl font-bold tracking-tight sm:text-3xl">
                   {siteConfig.siteName}
@@ -26,7 +26,7 @@ export default function SiteHeader() {
               </a>
             </div>
 
-            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-white/10 pt-3 sm:border-0 sm:pt-0">
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-2 border-t border-white/10 pt-3 sm:border-t-0 sm:pt-0">
               <nav className="flex flex-wrap items-center gap-x-4 gap-y-1" aria-label="Site">
                 <a href="#contact" className={link}>
                   Contact
@@ -66,7 +66,7 @@ export default function SiteHeader() {
                   <button
                     type="button"
                     onClick={() => setAuth({ open: true, tab: 'signup' })}
-                    className="rounded-full bg-gradient-to-r from-amber-400 to-orange-500 px-4 py-1.5 text-xs font-bold text-zinc-950 shadow-md transition hover:brightness-105"
+                    className="rounded-full bg-gradient-to-r from-rva-brick to-rva-river px-4 py-1.5 text-xs font-bold text-white shadow-md transition hover:brightness-110"
                   >
                     Register
                   </button>

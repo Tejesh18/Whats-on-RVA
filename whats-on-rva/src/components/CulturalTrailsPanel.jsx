@@ -28,17 +28,17 @@ export default function CulturalTrailsPanel({ events, onSelectEvent, onOpenStory
   if (!trail) return null;
 
   return (
-    <div className="mt-4 rounded-2xl border border-violet-200/80 bg-gradient-to-br from-violet-50/90 to-white p-4 shadow-inner">
+    <div className="mt-4 rounded-2xl border border-rva-james/25 bg-gradient-to-br from-rva-cream to-white p-4 shadow-inner">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <p className="text-[10px] font-bold uppercase tracking-widest text-violet-700/90">Cultural trails</p>
-          <h3 className="font-display text-lg font-bold text-zinc-900">Themed walks + listings</h3>
+          <p className="text-[10px] font-bold uppercase tracking-widest text-rva-river">RVA cultural trails</p>
+          <h3 className="font-display text-lg font-bold text-rva-slate">Themed nights + what&apos;s on now</h3>
         </div>
         <div className="flex flex-wrap gap-2">
           <select
             value={trailId}
             onChange={(e) => setTrailId(e.target.value)}
-            className="min-w-[180px] rounded-xl border border-violet-200 bg-white py-2 pl-3 pr-8 text-sm font-bold text-zinc-800"
+            className="min-w-[180px] rounded-xl border border-rva-river/25 bg-white py-2 pl-3 pr-8 text-sm font-bold text-zinc-800"
           >
             {CULTURAL_TRAILS.map((t) => (
               <option key={t.id} value={t.id}>
@@ -49,7 +49,7 @@ export default function CulturalTrailsPanel({ events, onSelectEvent, onOpenStory
           <button
             type="button"
             onClick={handleShare}
-            className="rounded-xl border border-violet-300 bg-white px-4 py-2 text-xs font-bold text-violet-900 hover:bg-violet-50"
+            className="rounded-xl border border-rva-river/30 bg-white px-4 py-2 text-xs font-bold text-rva-river hover:bg-rva-cream"
           >
             Share trail
           </button>
@@ -60,7 +60,7 @@ export default function CulturalTrailsPanel({ events, onSelectEvent, onOpenStory
         <button
           type="button"
           onClick={() => onOpenStory?.(trail.storySlug)}
-          className="mt-3 text-xs font-bold text-violet-800 underline-offset-2 hover:underline"
+          className="mt-3 text-xs font-bold text-rva-river underline-offset-2 hover:underline"
         >
           Open story: {story.title}
         </button>
@@ -71,14 +71,14 @@ export default function CulturalTrailsPanel({ events, onSelectEvent, onOpenStory
       </p>
       <ul className="mt-3 max-h-48 space-y-2 overflow-y-auto pr-1">
         {matched.length === 0 ? (
-          <li className="text-sm text-zinc-500">No trail matches in the current feed — relax filters or load live data.</li>
+          <li className="text-sm text-zinc-500">Nothing on this trail in the current RVA slice — widen filters or retry live feeds.</li>
         ) : (
           matched.map((e) => (
             <li key={e.id}>
               <button
                 type="button"
                 onClick={() => onSelectEvent?.(e.id)}
-                className="w-full rounded-xl border border-zinc-200/80 bg-white px-3 py-2 text-left text-sm font-semibold text-zinc-800 transition hover:border-violet-300"
+                className="w-full rounded-xl border border-zinc-200/80 bg-white px-3 py-2 text-left text-sm font-semibold text-zinc-800 transition hover:border-rva-gold"
               >
                 <span className="block">{e.title}</span>
                 <span className="text-xs font-medium text-zinc-500">

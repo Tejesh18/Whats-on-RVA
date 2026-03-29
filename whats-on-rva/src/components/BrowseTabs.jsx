@@ -8,9 +8,9 @@ const tabs = [
 export default function BrowseTabs({ value, onChange, counts }) {
   return (
     <div
-      className="inline-flex gap-0.5 rounded-full border border-zinc-200/80 bg-zinc-100/80 p-1 shadow-inner"
+      className="inline-flex gap-0.5 rounded-full border border-rva-slate/12 bg-rva-parchment/90 p-1 shadow-inner"
       role="tablist"
-      aria-label="Browse events"
+      aria-label="Browse Richmond event lists"
     >
       {tabs.map((t) => (
         <button
@@ -21,8 +21,8 @@ export default function BrowseTabs({ value, onChange, counts }) {
           onClick={() => onChange(t.id)}
           className={`relative rounded-full px-4 py-2 text-sm font-bold transition sm:px-6 ${
             value === t.id
-              ? 'bg-white text-zinc-900 shadow-md ring-1 ring-zinc-200/80'
-              : 'text-zinc-500 hover:text-zinc-800'
+              ? 'bg-white text-rva-slate shadow-md ring-1 ring-rva-river/20'
+              : 'text-rva-slate/55 hover:text-rva-slate'
           }`}
         >
           {t.label}

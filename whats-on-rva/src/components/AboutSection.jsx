@@ -13,10 +13,11 @@ export default function AboutSection() {
         </summary>
         <div className="space-y-4 border-t border-rva-slate/10 px-5 py-5 text-sm leading-relaxed text-rva-slate/75">
           <p>
-            {siteConfig.siteName} is styled like a modern discovery product: search, filters, tabs,
-            and an interactive map. Listings are limited to <strong>Richmond city limits</strong>{' '}
-            (we drop obvious out-of-city venues such as Petersburg when we can tell from location
-            data). We are not the organizer — each event links out for tickets and updates.
+            {siteConfig.siteName} is a Richmond-first guide: search, filters, tabs, and a map that
+            shares the same <strong>city-limits bounding box</strong> as our filters — think “inside the
+            ink on the map,” not the whole 804 metro. We drop obvious out-of-city pins (e.g. Petersburg)
+            when coordinates or copy make that clear. We are not the organizer — every listing hands off
+            for tickets and last-minute changes.
           </p>
           <ul className="list-inside list-disc space-y-2">
             <li>

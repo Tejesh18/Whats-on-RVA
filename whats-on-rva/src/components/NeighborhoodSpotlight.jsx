@@ -19,15 +19,14 @@ export default function NeighborhoodSpotlight({
 
   return (
     <section className="mb-8" aria-labelledby="spotlight-heading">
-      <h2 id="spotlight-heading" className="font-display text-xl font-bold text-zinc-900 sm:text-2xl">
-        Explore Richmond — neighborhoods &amp; stories
+      <h2 id="spotlight-heading" className="font-display text-xl font-bold text-rva-slate sm:text-2xl">
+        Know the neighborhood before you go
       </h2>
-      <p className="mt-2 max-w-3xl text-sm leading-relaxed text-zinc-600">
-        Filter the event feed by area, save favorites for the For you tab, and open full story guides with timelines,
-        before/after views, and listings matched by place and theme.
+      <p className="mt-2 max-w-3xl text-sm leading-relaxed text-rva-slate/75">
+        Jump from Jackson Ward to Manchester, save the pockets you care about for <strong className="font-semibold text-rva-slate">For you</strong>, and open story guides with timelines, before/after views, and listings matched to each corridor.
       </p>
 
-      <h3 className="mt-8 font-display text-sm font-bold uppercase tracking-widest text-zinc-500">Areas</h3>
+      <h3 className="mt-8 font-display text-sm font-bold uppercase tracking-widest text-rva-slate/55">RVA corridors</h3>
       <div className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-5">
         {NEIGHBORHOOD_SPOTLIGHTS.map((s) => {
           const active = s.match.test(filters.neighborhood || '');
@@ -35,25 +34,25 @@ export default function NeighborhoodSpotlight({
             <div
               key={s.id}
               className={`flex flex-col rounded-2xl border bg-white p-4 shadow-sm transition ${
-                active ? 'border-amber-400 ring-2 ring-amber-400/30' : 'border-zinc-200/90 hover:border-zinc-300'
+                active ? 'border-rva-gold ring-2 ring-rva-gold/35' : 'border-zinc-200/90 hover:border-rva-river/25'
               }`}
             >
               <h4 className="font-display text-base font-bold text-zinc-900">{s.label}</h4>
-              <p className="mt-1 flex-1 text-xs leading-relaxed text-zinc-500">Show events in this corridor.</p>
+              <p className="mt-1 flex-1 text-xs leading-relaxed text-zinc-500">Filter listings to this part of the city.</p>
               <div className="mt-3 flex flex-col gap-2">
                 <button
                   type="button"
                   onClick={() => pickSpotlight(s)}
-                  className="w-full rounded-xl bg-zinc-900 py-2 text-xs font-bold text-white hover:bg-zinc-800"
+                  className="w-full rounded-xl bg-rva-river py-2 text-xs font-bold text-white hover:bg-rva-river-light"
                 >
-                  Show events
+                  Show RVA events
                 </button>
                 <button
                   type="button"
                   onClick={() => onOpenStory?.(s.storySlug)}
-                  className="w-full rounded-xl border border-violet-200 bg-violet-50 py-2 text-xs font-bold text-violet-900 hover:bg-violet-100"
+                  className="w-full rounded-xl border border-rva-river/25 bg-rva-cream py-2 text-xs font-bold text-rva-river hover:bg-white"
                 >
-                  Explore story
+                  Read the story
                 </button>
                 <button
                   type="button"
@@ -61,8 +60,8 @@ export default function NeighborhoodSpotlight({
                   onClick={() => onToggleFavoriteNeighborhood?.(s.label)}
                   className={`w-full rounded-xl py-2 text-xs font-bold ${
                     favoriteNeighborhoods?.has(s.label)
-                      ? 'bg-amber-400 text-zinc-900'
-                      : 'border border-zinc-200 text-zinc-600 hover:border-amber-300'
+                      ? 'bg-rva-gold text-rva-slate'
+                      : 'border border-zinc-200 text-zinc-600 hover:border-rva-gold'
                   }`}
                 >
                   {favoriteNeighborhoods?.has(s.label) ? '★ Saved area' : '★ Save area'}
@@ -73,10 +72,12 @@ export default function NeighborhoodSpotlight({
         })}
       </div>
 
-      <h3 className="mt-10 font-display text-sm font-bold uppercase tracking-widest text-zinc-500">
-        Neighborhood story guides
+      <h3 className="mt-10 font-display text-sm font-bold uppercase tracking-widest text-rva-slate/55">
+        Deeper RVA reads
       </h3>
-      <p className="mt-1 text-sm text-zinc-600">Deeper reads — jazz history, hilltop change, southside arts — with timelines and linked events.</p>
+      <p className="mt-1 text-sm text-rva-slate/75">
+        Jazz corridors, Church Hill change, Southside arts — timelines, before/after frames, and hooks back into live listings.
+      </p>
       <ul className="mt-5 grid gap-6 md:grid-cols-3">
         {STORY_SLUGS.map((slug) => {
           const s = getStory(slug);
@@ -98,7 +99,7 @@ export default function NeighborhoodSpotlight({
                 <button
                   type="button"
                   onClick={() => onOpenStory?.(slug)}
-                  className="mt-4 w-full rounded-xl bg-gradient-to-r from-amber-500 to-orange-600 py-2.5 text-sm font-bold text-zinc-950 shadow-md hover:brightness-105"
+                  className="mt-4 w-full rounded-xl bg-gradient-to-r from-rva-brick to-rva-river py-2.5 text-sm font-bold text-white shadow-md hover:brightness-105"
                 >
                   Open story
                 </button>

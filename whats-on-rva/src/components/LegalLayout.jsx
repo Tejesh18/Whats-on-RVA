@@ -11,7 +11,7 @@ export function LegalSection({ title, children }) {
 
 export default function LegalLayout({ title, children }) {
   return (
-    <div className="flex min-h-screen flex-col bg-[#f6f4f1]">
+    <div className="flex min-h-screen flex-col bg-rva-cream">
       <header className="border-b border-rva-slate/10 bg-white">
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-4 px-4 py-4 sm:px-6">
           <a

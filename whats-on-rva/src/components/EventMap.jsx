@@ -17,6 +17,7 @@ import { RICHMOND_TRANSIT_PINS } from '../data/transitPins.js';
 import { getEventTransitSummary } from '../lib/transitEstimates.js';
 import { appleMapsDirectionsUrl } from '../lib/travelHandoff.js';
 import { deriveMapPinCategory, MAP_PIN_LEGEND } from '../lib/mapPinCategory.js';
+import { rvaVoice } from '../config/rvaVoice.js';
 
 function stripBoldMarkers(text) {
   return text.replace(/\*\*([^*]+)\*\*/g, '$1');
@@ -255,10 +256,10 @@ export default function EventMap({
       <div className="flex flex-col gap-2 border-b border-zinc-200/90 bg-gradient-to-r from-zinc-50 to-white px-3 py-2.5">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div>
-            <span className="text-xs font-bold uppercase tracking-wider text-amber-700/90">Events map</span>
+            <span className="text-xs font-bold uppercase tracking-wider text-rva-brick">{rvaVoice.mapStripTitle}</span>
             <p className="text-[10px] text-zinc-500">
               <span className="inline-flex items-center gap-1">
-                <span className="h-2 w-2 rounded-full bg-amber-500" /> Listings
+                <span className="h-2 w-2 rounded-full bg-rva-gold" /> Listings
               </span>
               {storyPoints.length ? (
                 <>
@@ -298,7 +299,7 @@ export default function EventMap({
             <button
               type="button"
               onClick={fitAllEvents}
-              className="order-2 rounded-full border border-zinc-200 bg-white px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-zinc-700 shadow-sm transition hover:border-amber-400 hover:bg-amber-50 sm:order-1"
+              className="order-2 rounded-full border border-zinc-200 bg-white px-3 py-1 text-[10px] font-bold uppercase tracking-wide text-zinc-700 shadow-sm transition hover:border-rva-gold hover:bg-[#faf6e8] sm:order-1"
             >
               Fit all
             </button>
@@ -306,7 +307,7 @@ export default function EventMap({
               {pts.length} on map
             </span>
             {locateMsg ? (
-              <span className="order-3 max-w-[200px] text-right text-[10px] font-medium text-amber-800">
+              <span className="order-3 max-w-[200px] text-right text-[10px] font-medium text-rva-brick-deep">
                 {locateMsg}
               </span>
             ) : null}
@@ -325,7 +326,7 @@ export default function EventMap({
                   onClick={() => onMapContentFilterToggle(c.id)}
                   className={`rounded-full px-2.5 py-1 text-[10px] font-bold transition ${
                     on
-                      ? 'bg-amber-500 text-zinc-900 shadow-sm ring-1 ring-amber-600/30'
+                      ? 'bg-rva-gold text-rva-slate shadow-sm ring-1 ring-rva-brick/25'
                       : 'border border-zinc-200 bg-white text-zinc-600 hover:border-zinc-300 hover:bg-zinc-50'
                   }`}
                 >
@@ -360,10 +361,7 @@ export default function EventMap({
             Transit stops {showTransit ? 'visible' : 'hidden'}
           </button>
         ) : null}
-        <p className="text-[9px] leading-snug text-zinc-500">
-          Hover a pin for a quick title; click the pin (or choose in the list) for full details. Green <strong>Arts</strong> shapes
-          are district overlays — pin colors follow music, art, theatre, family, and free listings.
-        </p>
+        <p className="text-[9px] leading-snug text-zinc-500">{rvaVoice.mapStripHint}</p>
       </div>
       <div className="relative min-h-0 flex-1">
         <MapContainer
@@ -372,7 +370,7 @@ export default function EventMap({
           className="absolute inset-0 z-0 rounded-b-2xl"
           scrollWheelZoom
           zoomControl={false}
-          aria-label="Event locations map"
+          aria-label={rvaVoice.mapAriaLabel}
         >
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>'

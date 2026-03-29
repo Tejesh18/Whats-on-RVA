@@ -19,11 +19,12 @@ export default function ContactSection() {
           Contact
         </h2>
         <p className="mt-2 max-w-xl text-sm leading-relaxed text-rva-slate/70">
-          Sample contact only — swap in a real address when you launch.
+          Questions about this Richmond guide? Replace the placeholder email before you ship — we don&apos;t run a box office
+          here.
         </p>
         <a
           href={mail}
-          className="mt-4 inline-flex rounded-lg bg-rva-river px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-rva-slate"
+          className="mt-4 inline-flex rounded-lg bg-rva-river px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-rva-river-light"
         >
           {siteConfig.contactEmail}
         </a>
