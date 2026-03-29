@@ -1,6 +1,8 @@
 # What's On RVA
 
-A **Richmond, Virginia** web app for discovering **arts and culture events**: search, filters, an **interactive map**, **neighborhood stories**, and **planning tools**. Listings link out to organizers for tickets and the latest details.
+A **Richmond, Virginia** web app for discovering **arts and culture events**: search, filters, an **interactive map**, **neighborhood stories**, and **planning tools**. Listings use a **Get tickets** (or organizer) link for the canonical URL — always confirm details on that page before going out.
+
+This repo sits under the **Pillar** / **Pillar City storytelling** umbrella and was shaped for **Hack for RVA** — Richmond’s civic-tech and community-build weekend — as a practical front door to what’s happening in the city.
 
 ## Overview
 
@@ -18,10 +20,13 @@ A **Richmond, Virginia** web app for discovering **arts and culture events**: se
 
 ## Features (high level)
 
+- **Hero:** “Live listings. One city.” with a **Richmond skyline** image (Unsplash — see credit line under the photo in `HeroSection.jsx`).
 - **Home tabs:** **Events** (search, discovery, browse, map) · **Neighborhood stories** (spotlight + story map) · **Plan & personalize** (assistant, trails, “For you”).
-- **Events map:** CARTO **Voyager** basemap, Richmond bounds overlay, optional arts/district polygons, category-colored pins, **hover** tooltips (title + category), **click** for full popup (directions handoff, get tickets link), **Near me** + list selection sync.
-- **Getting there:** Rough on-page hints; **Google Maps** / **Apple Maps** links for live transit, driving (traffic), walking, and biking.
-- **Personalization:** Saved favorites, categories, story views (browser storage); optional remote planning-assistant endpoint.
+- **Why us:** Value props live **near the bottom** of the home page (before the footer); hero links to `#why-us`.
+- **Events map:** CARTO **Voyager** basemap, Richmond bounds overlay, optional arts/district polygons, **category-colored pins** (music / visual / theatre / family / free / other), **hover** tooltips (title + category), **click** for full popup (transit hints, multi-mode **Maps** links, **Get tickets**), **Near me** + list selection sync.
+- **Getting there:** On-page estimates are illustrative; **Google Maps** / **Apple Maps** links open **live** transit, driving (traffic), walking, and biking.
+- **Planning assistant:** Floating **Ask me** control (bottom-right); optional `VITE_PLANNING_ASSISTANT_URL` for server-backed replies, else on-device rules.
+- **Personalization:** Saved favorites, categories, story views (browser storage).
 - **Legal:** `#privacy`, `#terms`, contact section; update `policiesLastUpdated` in `src/config/siteConfig.js` when you change policies.
 
 ## Project layout
@@ -29,14 +34,21 @@ A **Richmond, Virginia** web app for discovering **arts and culture events**: se
 | Path | Role |
 |------|------|
 | `src/App.jsx` | Shell: tabs, filters, map column, assistant, modals |
+| `src/components/HeroSection.jsx` | Hero + Richmond hero image URL + credit |
+| `src/components/WhyUsSection.jsx` | Why us (rendered low on the home page) |
+| `src/components/PlanningChatAssistant.jsx` | Floating Ask me + chat panel |
+| `src/components/EventCard.jsx` | Feed cards, **Get tickets**, transit strip |
+| `src/components/EventMap.jsx` | Events map (markers, tooltips, popups) |
+| `src/components/EventTransitStrip.jsx` | “Getting there” + Maps handoff |
 | `src/services/eventService.js` | Loads feeds, merge, dedupe, fallback |
 | `src/services/sourceAdapters.js` | CultureWorks + optional ticket feed → normalized events |
 | `src/lib/richmondBounds.js` | City box + text gates |
 | `src/lib/mergeEvents.js` | Dedupe when merging sources |
 | `src/lib/mapPinCategory.js` | Map pin color bucket from listing text/category |
+| `src/lib/mapContentFilters.js` | Map “filter pins” semantics |
 | `src/lib/travelHandoff.js` | Google / Apple Maps direction URLs |
+| `src/lib/transitEstimates.js` | Rough walk / Pulse-style hints |
 | `src/lib/eventFilters.js` | Search, filters, sort, display helpers |
-| `src/components/EventMap.jsx` | Events map (markers, overlays, controls) |
 | `src/config/siteConfig.js` | Site name, legal copy, policy date |
 | `src/config/env.js` | `VITE_*` usage |
 
@@ -123,7 +135,7 @@ npm run preview  # local production preview
 - [ ] If using ticket merge in production: deploy HTTPS proxy + `VITE_EVENTBRITE_PROXY`
 - [ ] Update **`policiesLastUpdated`** in `siteConfig.js` if you edited Privacy/Terms
 - [ ] Run `npm run build` locally and fix any errors
-- [ ] Spot-check map, legal links, and external listing URLs on the production domain
+- [ ] Spot-check hero image load (Unsplash), map, **Get tickets** links, legal links, and `#why-us` on production
 
 ## Accounts (demo)
 
@@ -131,7 +143,7 @@ Sign-in / register uses **browser `localStorage` only** — suitable for demos. 
 
 ## Accuracy
 
-Times, prices, and accessibility change on organizers’ sites. Users should always confirm on the official listing before going out.
+Times, prices, and accessibility change on organizers’ sites. Users should always confirm on the official listing (**Get tickets** target) before going out.
 
 ## Maintenance scripts (optional)
 
@@ -139,5 +151,6 @@ Under `scripts/` there are helpers to import **GRTC GTFS** into JSON (PowerShell
 
 ## License / third-party
 
-- Map tiles: **OpenStreetMap** contributors + **CARTO** (see on-map attribution).
-- Event data: subject to CultureWorks and any optional feed terms you enable.
+- **Hero image:** Richmond skyline — [Stephen Poore on Unsplash](https://unsplash.com/photos/gpqV6TcGWmk) ([Unsplash License](https://unsplash.com/license)). To avoid a runtime dependency on Unsplash, download the image and serve it from `public/` (then point `HeroSection.jsx` at that path).
+- **Map tiles:** **OpenStreetMap** contributors + **CARTO** (see on-map attribution).
+- **Event data:** Subject to CultureWorks and any optional feed terms you enable.
