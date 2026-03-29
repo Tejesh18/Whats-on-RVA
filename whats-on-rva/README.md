@@ -19,7 +19,7 @@ A **Richmond, Virginia** web app for discovering **arts and culture events**: se
 ## Features (high level)
 
 - **Home tabs:** **Events** (search, discovery, browse, map) · **Neighborhood stories** (spotlight + story map) · **Plan & personalize** (assistant, trails, “For you”).
-- **Events map:** CARTO **Voyager** basemap, Richmond bounds overlay, optional arts/district polygons, category-colored pins, **hover** tooltips (title + category), **click** for full popup (directions handoff, source link), **Near me** + list selection sync.
+- **Events map:** CARTO **Voyager** basemap, Richmond bounds overlay, optional arts/district polygons, category-colored pins, **hover** tooltips (title + category), **click** for full popup (directions handoff, get tickets link), **Near me** + list selection sync.
 - **Getting there:** Rough on-page hints; **Google Maps** / **Apple Maps** links for live transit, driving (traffic), walking, and biking.
 - **Personalization:** Saved favorites, categories, story views (browser storage); optional remote planning-assistant endpoint.
 - **Legal:** `#privacy`, `#terms`, contact section; update `policiesLastUpdated` in `src/config/siteConfig.js` when you change policies.

@@ -37,7 +37,7 @@ function EventRow({ e, onSelectEvent, onClose }) {
           rel="noopener noreferrer"
           className="rounded-lg bg-amber-500 px-3 py-1 text-xs font-bold text-zinc-950 hover:bg-amber-400"
         >
-          View source
+          Get tickets
         </a>
       </div>
     </li>
@@ -224,7 +224,7 @@ export default function StoryDetailModal({ slug, events, onClose, onSelectEvent,
                             rel="noopener noreferrer"
                             className="rounded-lg bg-amber-500 px-3 py-1 text-xs font-bold text-zinc-950 hover:bg-amber-400"
                           >
-                            Source
+                            Get tickets
                           </a>
                         </div>
                       </div>

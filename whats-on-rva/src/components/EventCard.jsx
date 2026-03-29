@@ -179,7 +179,7 @@ function EventCard({
               rel="noopener noreferrer"
               className="inline-flex flex-1 items-center justify-center rounded-lg bg-zinc-900 py-2.5 text-sm font-bold text-white transition hover:bg-zinc-800 sm:flex-none sm:px-6"
             >
-              View source
+              Get tickets
             </a>
           </div>
         </div>

@@ -13,7 +13,7 @@
  * @property {string|null} price — display string when paid / variable
  * @property {string} description — plain text, may be shortened for cards
  * @property {string} sourceName — human-readable publisher (e.g. "CultureWorks")
- * @property {string} sourceUrl — canonical link for “View source”
+ * @property {string} sourceUrl — canonical link for “Get tickets” / organizer page
  * @property {string} imageUrl
  * @property {boolean} featured
  * @property {boolean} hiddenGem

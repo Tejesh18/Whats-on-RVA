@@ -552,7 +552,7 @@ export default function EventMap({
                     rel="noopener noreferrer"
                     className="mt-3 inline-flex w-full items-center justify-center rounded-xl bg-zinc-900 px-3 py-2 text-xs font-bold text-white shadow-sm transition hover:bg-zinc-800"
                   >
-                    View source →
+                    Get tickets →
                   </a>
                 </div>
               </Popup>
