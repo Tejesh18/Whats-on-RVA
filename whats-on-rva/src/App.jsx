@@ -208,7 +208,7 @@ function HomeView({ hash }) {
     events,
     deferredSearch,
     filters,
-    datePreset,
+    dateRange,
     accessibilityKeys,
     tonightActive,
     weekendActive,
