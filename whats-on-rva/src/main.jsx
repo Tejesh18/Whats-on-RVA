@@ -3,12 +3,15 @@ import { createRoot } from 'react-dom/client';
 import 'leaflet/dist/leaflet.css';
 import './index.css';
 import { AuthProvider } from './context/AuthContext.jsx';
+import RootErrorBoundary from './components/RootErrorBoundary.jsx';
 import App from './App.jsx';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <AuthProvider>
-      <App />
-    </AuthProvider>
+    <RootErrorBoundary>
+      <AuthProvider>
+        <App />
+      </AuthProvider>
+    </RootErrorBoundary>
   </StrictMode>
 );

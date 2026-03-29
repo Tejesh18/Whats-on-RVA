@@ -7,7 +7,10 @@ export function dedupeMergedEvents(events) {
   const seen = new Set();
   const out = [];
   for (const ev of events) {
-    const key = `${String(ev.title).toLowerCase().slice(0, 56)}|${ev.startTime.slice(0, 13)}`;
+    const st = ev?.startTime;
+    const stKey =
+      typeof st === 'string' && st.length >= 13 ? st.slice(0, 13) : String(st ?? 'na');
+    const key = `${String(ev?.title ?? '').toLowerCase().slice(0, 56)}|${stKey}`;
     if (seen.has(key)) continue;
     seen.add(key);
     out.push(ev);

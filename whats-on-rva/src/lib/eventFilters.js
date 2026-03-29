@@ -3,6 +3,12 @@ import { todayYmdRichmond } from '../data/mockEvents.js';
 import { richmondTimeZone as RICHMOND_TZ } from '../config/env.js';
 import { NEIGHBORHOOD_SPOTLIGHTS } from '../data/neighborhoodStories.js';
 
+function isValidTimeIso(iso) {
+  if (iso == null || iso === '') return false;
+  const t = new Date(iso).getTime();
+  return Number.isFinite(t);
+}
+
 /**
  * Match feed filter to an event neighborhood (exact, substring, or spotlight regex).
  */
@@ -26,6 +32,7 @@ export function neighborhoodMatchesFilter(eventNeighborhood, filterValue) {
  * an evening start (5pm+) or the event start is still in the future.
  */
 export function isTonightRichmond(event, now = new Date()) {
+  if (!isValidTimeIso(event?.startTime)) return false;
   const eventDay = todayYmdRichmond(new Date(event.startTime));
   const today = todayYmdRichmond(now);
   if (eventDay !== today) return false;
@@ -46,6 +53,7 @@ export function isTonightRichmond(event, now = new Date()) {
 }
 
 export function formatEventWhen(iso) {
+  if (!isValidTimeIso(iso)) return 'Date TBD';
   return new Intl.DateTimeFormat('en-US', {
     timeZone: RICHMOND_TZ,
     weekday: 'short',
@@ -58,6 +66,9 @@ export function formatEventWhen(iso) {
 
 /** Two-line date chip for cards (Richmond wall clock). */
 export function formatEventDayBadge(iso) {
+  if (!isValidTimeIso(iso)) {
+    return { month: '—', day: '?' };
+  }
   const d = new Date(iso);
   const month = new Intl.DateTimeFormat('en-US', { timeZone: RICHMOND_TZ, month: 'short' }).format(d);
   const day = new Intl.DateTimeFormat('en-US', { timeZone: RICHMOND_TZ, day: 'numeric' }).format(d);
@@ -110,27 +121,35 @@ export function matchesFilters(event, filters) {
 
 /** YYYY-MM-DD for an event start in the configured metro timezone. */
 export function eventStartYmdRichmond(iso) {
-  const parts = new Intl.DateTimeFormat('en-CA', {
-    timeZone: RICHMOND_TZ,
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).formatToParts(new Date(iso));
-  const y = parts.find((p) => p.type === 'year')?.value;
-  const m = parts.find((p) => p.type === 'month')?.value;
-  const d = parts.find((p) => p.type === 'day')?.value;
-  return `${y}-${m}-${d}`;
+  if (!isValidTimeIso(iso)) return '';
+  try {
+    const parts = new Intl.DateTimeFormat('en-CA', {
+      timeZone: RICHMOND_TZ,
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+    }).formatToParts(new Date(iso));
+    const y = parts.find((p) => p.type === 'year')?.value;
+    const m = parts.find((p) => p.type === 'month')?.value;
+    const d = parts.find((p) => p.type === 'day')?.value;
+    if (!y || !m || !d) return '';
+    return `${y}-${m}-${d}`;
+  } catch {
+    return '';
+  }
 }
 
 /**
  * Calendar range filter: `fromYmd` / `toYmd` are inclusive YYYY-MM-DD strings, or '' for open-ended.
  * Both empty = show all dates (subject to other filters).
  */
-export function matchesDateRangeFilter(event, { fromYmd, toYmd }) {
+export function matchesDateRangeFilter(event, range) {
+  const { fromYmd, toYmd } = range || {};
   const f = String(fromYmd || '').trim();
   const t = String(toYmd || '').trim();
   if (!f && !t) return true;
   const ev = eventStartYmdRichmond(event.startTime);
+  if (!ev) return false;
   if (f && t) {
     const a = f <= t ? f : t;
     const b = f <= t ? t : f;
@@ -163,6 +182,7 @@ export function matchesDatePreset(event, preset, now = new Date()) {
  * Fri 5pm+ / Sat / Sun, within a loose “coming up soon” window (demo-friendly).
  */
 export function isThisWeekendRichmond(event, now = new Date()) {
+  if (!isValidTimeIso(event?.startTime)) return false;
   const ev = new Date(event.startTime);
   const parts = new Intl.DateTimeFormat('en-US', {
     timeZone: RICHMOND_TZ,

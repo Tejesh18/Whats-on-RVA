@@ -228,7 +228,12 @@ export function normalizeCultureWorksNode(node, fallbackListingUrl) {
 }
 
 function buildCultureWorksRequestUrl(baseUrl, { start, end, pp, page, useDateRange }) {
-  const url = new URL(baseUrl);
+  let url;
+  try {
+    url = new URL(baseUrl);
+  } catch {
+    throw new Error(`Invalid CultureWorks URL: ${String(baseUrl).slice(0, 80)}`);
+  }
   url.searchParams.set('pp', String(pp));
   url.searchParams.set('page', String(page));
   if (useDateRange) {
